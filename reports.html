@@ -717,15 +717,14 @@
     });
 }
         function toggleShareMenu(event, filename, title) {
-    // Create or show share menu
-    let existingMenu = document.getElementById('temp-share-menu');
-    
     // Remove any existing menu
+    let existingMenu = document.getElementById('temp-share-menu');
     if (existingMenu) {
         existingMenu.remove();
+        return; // If menu exists, just close it
     }
     
-    // Create new share menu
+    // Create new share menu popup
     const menu = document.createElement('div');
     menu.id = 'temp-share-menu';
     menu.style.cssText = `
@@ -734,24 +733,23 @@
         left: 50%;
         transform: translate(-50%, -50%);
         background: white;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        padding: 1rem;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        border: 2px solid #374151;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.4);
         z-index: 1000;
+        min-width: 280px;
     `;
     
     menu.innerHTML = `
-        <div style="margin-bottom: 1rem; font-weight: bold;">Share: ${title}</div>
-        <button onclick="shareViaEmail('${title}', '${filename}')" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.5rem;">📧 Email</button>
-        <button onclick="shareViaLinkedIn('${title}', '${filename}')" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.5rem;">💼 LinkedIn</button>
-        <button onclick="shareViaTwitter('${title}', '${filename}')" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.5rem;">🐦 Twitter</button>
-        <button onclick="copyReportLink('${filename}')" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.5rem;">🔗 Copy Link</button>
-        <button onclick="closeShareMenu()" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.5rem; background: #f0f0f0;">❌ Close</button>
+        <div style="margin-bottom: 1rem; font-weight: bold; font-size: 1.1rem; color: #374151;">Share Report</div>
+        <div style="margin-bottom: 1rem; color: #6b7280; font-size: 0.9rem;">${title}</div>
+        <button onclick="shareViaEmail('${title.replace(/'/g, "\\'")}', '${filename}')" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer; transition: background 0.2s;">📧 Share via Email</button>
+        <button onclick="copyReportLink('${filename}')" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer; transition: background 0.2s;">🔗 Copy Link</button>
+        <button onclick="closeShareMenu()" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: #f8fafc; cursor: pointer;">❌ Close</button>
     `;
     
     document.body.appendChild(menu);
-    
     event.stopPropagation();
 }
 
