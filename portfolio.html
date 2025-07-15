@@ -725,6 +725,128 @@
       }
     });
   }
+    // Portfolio CMS Integration
+async function loadPortfolioData() {
+    try {
+        const response = await fetch('https://api.github.com/repos/AndreiDumitrache/lorthelas-research-website/contents/content/portfolio/current-positioning.md');
+        const file = await response.json();
+        
+        const contentResponse = await fetch(file.download_url);
+        const content = await contentResponse.text();
+        
+        // Parse YAML frontmatter
+        const parts = content.split('---');
+        if (parts.length >= 3) {
+            const yamlContent = parts[1];
+            
+            // Parse the YAML manually (simple approach)
+            const data = parsePortfolioYAML(yamlContent);
+            updatePortfolioPage(data);
+        }
+        
+    } catch (error) {
+        console.error('Error loading portfolio data:', error);
+        // Keep static content as fallback
+    }
+}
+
+function parsePortfolioYAML(yamlText) {
+    const data = { metrics: {}, allocation: [], highlights: [] };
+    const lines = yamlText.split('\n');
+    let currentSection = null;
+    let currentItem = {};
+    
+    for (let line of lines) {
+        line = line.trim();
+        if (!line || line.startsWith('#')) continue;
+        
+        if (line.startsWith('title:')) data.title = line.split(':')[1].trim().replace(/"/g, '');
+        else if (line.startsWith('outlook:')) data.outlook = line.split(':')[1].trim().replace(/"/g, '');
+        else if (line === 'metrics:') currentSection = 'metrics';
+        else if (line === 'allocation:') currentSection = 'allocation';
+        else if (line === 'highlights:') currentSection = 'highlights';
+        else if (line.startsWith('  - ') && currentSection === 'allocation') {
+            if (currentItem.asset) data.allocation.push(currentItem);
+            currentItem = {};
+        }
+        else if (line.startsWith('  - ') && currentSection === 'highlights') {
+            if (currentItem.title) data.highlights.push(currentItem);
+            currentItem = {};
+        }
+        else if (currentSection === 'metrics' && line.includes(':')) {
+            const [key, value] = line.split(':');
+            data.metrics[key.trim()] = value.trim().replace(/"/g, '');
+        }
+        else if (currentSection && line.includes(':')) {
+            const [key, value] = line.split(':');
+            currentItem[key.trim()] = value.trim().replace(/"/g, '');
+        }
+    }
+    
+    // Add last items
+    if (currentSection === 'allocation' && currentItem.asset) data.allocation.push(currentItem);
+    if (currentSection === 'highlights' && currentItem.title) data.highlights.push(currentItem);
+    
+    return data;
+}
+
+function updatePortfolioPage(data) {
+    // Update metrics
+    if (data.metrics.annual_return) updateMetric('annual_return', data.metrics.annual_return);
+    if (data.metrics.sharpe_ratio) updateMetric('sharpe_ratio', data.metrics.sharpe_ratio);
+    if (data.metrics.volatility) updateMetric('volatility', data.metrics.volatility);
+    if (data.metrics.max_drawdown) updateMetric('max_drawdown', data.metrics.max_drawdown);
+    if (data.metrics.beta) updateMetric('beta', data.metrics.beta);
+    if (data.metrics.alpha) updateMetric('alpha', data.metrics.alpha);
+    
+    // Update outlook
+    if (data.outlook) {
+        const outlookElement = document.querySelector('.positioning-description');
+        if (outlookElement) outlookElement.textContent = data.outlook;
+    }
+    
+    // Update allocation legend
+    if (data.allocation && data.allocation.length > 0) {
+        updateAllocationLegend(data.allocation);
+    }
+    
+    console.log('Portfolio data updated from CMS');
+}
+
+function updateMetric(metricName, value) {
+    const elements = document.querySelectorAll('.metric-value');
+    const labels = document.querySelectorAll('.metric-label');
+    
+    labels.forEach((label, index) => {
+        const text = label.textContent.toLowerCase();
+        if ((metricName === 'annual_return' && text.includes('annual return')) ||
+            (metricName === 'sharpe_ratio' && text.includes('sharpe')) ||
+            (metricName === 'volatility' && text.includes('volatility')) ||
+            (metricName === 'max_drawdown' && text.includes('drawdown')) ||
+            (metricName === 'beta' && text.includes('beta')) ||
+            (metricName === 'alpha' && text.includes('alpha'))) {
+            elements[index].textContent = value;
+        }
+    });
+}
+
+function updateAllocationLegend(allocation) {
+    const legend = document.querySelector('.allocation-legend');
+    if (!legend) return;
+    
+    legend.innerHTML = allocation.map(item => `
+        <div class="legend-item">
+            <div class="legend-color" style="background: ${item.color};"></div>
+            <span class="legend-label">${item.asset}</span>
+            <span class="legend-percentage">${item.percentage}%</span>
+        </div>
+    `).join('');
+}
+
+// Load portfolio data when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    loadPortfolioData();
+});
 </script>
 </body>
 </html>
