@@ -5,10 +5,10 @@ outlook: Based on our macroeconomic analysis and market assessment, we currently
   favor a defensive positioning with selective growth opportunities.
 allocation:
   - asset: Equities
-    percentage: 90
+    percentage: 10
     color: "#374151"
   - asset: Fixed Income
-    percentage: 119
+    percentage: 10
     color: "#6b7280"
   - asset: Commodities
     percentage: 10
@@ -17,7 +17,7 @@ allocation:
     percentage: 10
     color: "#d1d5db"
   - asset: Cash
-    percentage: 5
+    percentage: 60
     color: "#f3f4f6"
 metrics:
   annual_return: 8.7%
