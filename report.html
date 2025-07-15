@@ -381,9 +381,12 @@
                 </div>
 
                 <div class="report-actions">
-                    <a href="reports.html" class="action-button">← Back to Reports</a>
-                    <a href="#" class="action-button" id="download-pdf" style="display: none;">📄 Download PDF</a>
-                </div>
+    <a href="reports.html" class="action-button">← Back to Reports</a>
+    <a href="#" class="action-button" id="download-pdf" style="display: none;">📄 Download PDF</a>
+    <button class="action-button share-button" onclick="toggleShareMenu(event)" id="share-button" style="background: #3b82f6; color: white; border: none;">
+        📤 Share Report
+    </button>
+</div>
             </div>
         </div>
     </div>
@@ -481,6 +484,7 @@
         function displayReport(report, content) {
             document.getElementById('loading').style.display = 'none';
             document.getElementById('report-container').style.display = 'block';
+            currentReportTitle = report.title || 'Research Report';
             
             // Format date
             const date = new Date(report.date).toLocaleDateString('en-US', {
@@ -532,6 +536,77 @@
 
         // Load report when page loads
         document.addEventListener('DOMContentLoaded', loadReport);
+        // Share functionality for individual reports
+let currentReportTitle = '';
+let currentReportFilename = '';
+
+function toggleShareMenu(event) {
+    // Remove any existing menu
+    let existingMenu = document.getElementById('temp-share-menu');
+    if (existingMenu) {
+        existingMenu.remove();
+        return;
+    }
+    
+    // Create new share menu popup
+    const menu = document.createElement('div');
+    menu.id = 'temp-share-menu';
+    menu.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        border: 2px solid #374151;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+        z-index: 1000;
+        min-width: 280px;
+    `;
+    
+    menu.innerHTML = `
+        <div style="margin-bottom: 1rem; font-weight: bold; font-size: 1.1rem; color: #374151;">Share Report</div>
+        <div style="margin-bottom: 1rem; color: #6b7280; font-size: 0.9rem;">${currentReportTitle}</div>
+        <button onclick="shareViaEmail()" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer;">📧 Share via Email</button>
+        <button onclick="copyReportLink()" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer;">🔗 Copy Link</button>
+        <button onclick="closeShareMenu()" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: #f8fafc; cursor: pointer;">❌ Close</button>
+    `;
+    
+    document.body.appendChild(menu);
+    event.stopPropagation();
+}
+
+function closeShareMenu() {
+    const menu = document.getElementById('temp-share-menu');
+    if (menu) menu.remove();
+}
+
+function shareViaEmail() {
+    const url = window.location.href;
+    const subject = encodeURIComponent(`Research Report: ${currentReportTitle}`);
+    const body = encodeURIComponent(`I thought you might find this research report interesting:\n\n${currentReportTitle}\n\nRead it here: ${url}\n\nBest regards`);
+    window.open(`mailto:?subject=${subject}&body=${body}`);
+    closeShareMenu();
+}
+
+function copyReportLink() {
+    const url = window.location.href;
+    
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(url).then(() => {
+            alert('✅ Report link copied to clipboard!');
+        });
+    } else {
+        prompt('Copy this link:', url);
+    }
+    closeShareMenu();
+}
+
+// Close menu when clicking outside
+document.addEventListener('click', function() {
+    closeShareMenu();
+});
     </script>
 </body>
 </html>
