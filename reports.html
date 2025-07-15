@@ -250,10 +250,141 @@
             color: #374151;
         }
 
-        .loading {
+        /* Search Container */
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 3rem;
+        }
+
+        .search-box {
+            display: flex;
+            background: #ffffff;
+            border: 2px solid #e5e7eb;
+            border-radius: 25px;
+            padding: 0.5rem;
+            box-shadow: 0 4px 15px rgba(107, 114, 128, 0.1);
+            transition: all 0.3s ease;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .search-box:focus-within {
+            border-color: #374151;
+            box-shadow: 0 6px 20px rgba(107, 114, 128, 0.15);
+        }
+
+        .search-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            background: transparent;
+        }
+
+        .search-button {
+            background: #374151;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .search-button:hover {
+            background: #1f2937;
+            transform: scale(1.05);
+        }
+
+        /* Share Button */
+        .share-button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .share-button:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Share Menu */
+        .share-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            z-index: 100;
+            display: none;
+            min-width: 180px;
+        }
+
+        .share-menu.active {
+            display: block;
+        }
+
+        .share-option {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            text-decoration: none;
+            color: #374151;
+            transition: background 0.2s ease;
+            border: none;
+            background: none;
+            width: 100%;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .share-option:hover {
+            background: #f3f4f6;
+        }
+
+        .share-option:first-child {
+            border-radius: 8px 8px 0 0;
+        }
+
+        .share-option:last-child {
+            border-radius: 0 0 8px 8px;
+        }
+
+        /* Search Results Highlighting */
+        .search-highlight {
+            background: #fef3c7;
+            padding: 0.1rem 0.2rem;
+            border-radius: 3px;
+        }
+
+        .no-results {
             text-align: center;
-            padding: 4rem;
+            padding: 3rem;
             color: #6b7280;
+            font-size: 1.1rem;
+        }
+
+        .search-stats {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #6b7280;
+            font-size: 0.9rem;
         }
 
         footer {
@@ -363,6 +494,14 @@
                 <p class="page-subtitle">Comprehensive analysis of macroeconomic trends, political economy dynamics, and their impact on global financial markets</p>
             </div>
 
+            <!-- Search Bar -->
+            <div class="search-container">
+                <div class="search-box">
+                    <input type="text" id="search-input" placeholder="Search reports by title, category, or content..." class="search-input">
+                    <button class="search-button" onclick="searchReports()">🔍</button>
+                </div>
+            </div>
+
             <!-- Filter Tabs -->
             <div class="filter-tabs">
                 <button class="filter-tab active" data-category="all">All Reports</button>
@@ -372,6 +511,9 @@
                 <button class="filter-tab" data-category="Market Analysis">Market Analysis</button>
                 <button class="filter-tab" data-category="Geopolitical">Geopolitical</button>
             </div>
+
+            <!-- Search Results Stats -->
+            <div id="search-stats" class="search-stats" style="display: none;"></div>
 
             <!-- Loading Message -->
             <div id="loading" class="loading">
@@ -499,6 +641,25 @@
                         <div class="report-actions">
                             <a href="report.html?report=${report.filename}" class="read-more">Read Report</a>
                             ${report.pdf ? `<a href="${report.pdf}" class="download-pdf">📄 Download PDF</a>` : ''}
+                            <div style="position: relative;">
+                                <button class="share-button" onclick="toggleShareMenu(event, '${report.filename}', '${report.title?.replace(/'/g, "\\'")}')">
+                                    📤 Share
+                                </button>
+                                <div class="share-menu" id="share-menu-${report.filename.replace(/[^a-zA-Z0-9]/g, '')}">
+                                    <button class="share-option" onclick="shareViaEmail('${report.title?.replace(/'/g, "\\'")}', '${report.filename}')">
+                                        📧 Email
+                                    </button>
+                                    <button class="share-option" onclick="shareViaLinkedIn('${report.title?.replace(/'/g, "\\'")}', '${report.filename}')">
+                                        💼 LinkedIn
+                                    </button>
+                                    <button class="share-option" onclick="shareViaTwitter('${report.title?.replace(/'/g, "\\'")}', '${report.filename}')">
+                                        🐦 Twitter
+                                    </button>
+                                    <button class="share-option" onclick="copyReportLink('${report.filename}')">
+                                        🔗 Copy Link
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 `;
