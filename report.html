@@ -569,6 +569,8 @@ function toggleShareMenu(event) {
         <div style="margin-bottom: 1rem; font-weight: bold; font-size: 1.1rem; color: #374151;">Share Report</div>
         <div style="margin-bottom: 1rem; color: #6b7280; font-size: 0.9rem;">${currentReportTitle}</div>
         <button onclick="shareViaEmail()" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer;">📧 Share via Email</button>
+        <button onclick="shareViaLinkedIn()" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer;">💼 Share on LinkedIn</button>
+        <button onclick="shareViaTwitter()" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer;">🐦 Share on Twitter</button>
         <button onclick="copyReportLink()" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer;">🔗 Copy Link</button>
         <button onclick="closeShareMenu()" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: #f8fafc; cursor: pointer;">❌ Close</button>
     `;
@@ -607,6 +609,19 @@ function copyReportLink() {
 document.addEventListener('click', function() {
     closeShareMenu();
 });
+        function shareViaLinkedIn() {
+    const url = window.location.href;
+    const text = encodeURIComponent(`New research report: ${currentReportTitle}`);
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}&title=${text}`, '_blank');
+    closeShareMenu();
+}
+
+function shareViaTwitter() {
+    const url = window.location.href;
+    const text = encodeURIComponent(`Check out this research report: ${currentReportTitle} ${url} #Research #Finance #LorthelaResearch`);
+    window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
+    closeShareMenu();
+}
     </script>
 </body>
 </html>
