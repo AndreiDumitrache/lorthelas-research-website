@@ -23,7 +23,7 @@ metrics:
   annual_return: 9.1%
   sharpe_ratio: "1.23"
   volatility: 12.8%
-  max_drawdown: -8.0%
+  max_drawdown: -7.1%
   beta: "0.70"
   alpha: +2.1%
 highlights:
