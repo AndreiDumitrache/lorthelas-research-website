@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lorthelas Research | Capital structuring & Investment strategy</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <meta name="description" content="Macroeconomic analysis, political economy, and global conflicts impact on equities, commodities, bonds, and cryptocurrencies">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Header - starts small */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(51, 65, 85, 0.6);
+            backdrop-filter: blur(15px);
+            z-index: 1000;
+            transition: all 0.4s ease;
+        }
+
+        .header-scrolled {
+            background: rgba(51, 65, 85, 0.75);
+        }
+
+        /* Logo Header Row - hidden initially */
+        .logo-header {
+            padding: 0.8rem 0;
+            text-align: center;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+            opacity: 0;
+            transform: translateY(-100%);
+            transition: all 0.6s ease;
+            height: 0;
+            overflow: hidden;
+        }
+
+        .logo-header.visible {
+            opacity: 1;
+            transform: translateY(0);
+            height: auto;
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: #94a3b8;
+        }
+
+        /* Navigation Row - starts very thin */
+        .nav-header {
+            padding: 0.5rem 0;
+            transition: all 0.6s ease;
+        }
+
+        .nav-header.expanded {
+            padding: 1.2rem 0;
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            transition: all 0.5s ease;
+            margin: 0;
+        }
+
+        .nav-links.expanded {
+            gap: 3rem;
+        }
+
+        .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            transition: all 0.5s ease;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        .nav-links a:hover {
+            color: #94a3b8;
+        }
+
+        /* Hero Section with Diagonal Reveal */
+        .hero {
+            position: relative;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .slideshow-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(71, 85, 105, 0.85), rgba(100, 116, 139, 0.75));
+            z-index: 1;
+        }
+
+        /* Individual slide backgrounds */
+        .slide-1 {
+            background-image: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+        }
+
+        .slide-2 {
+            background-image: url('https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+        }
+
+        .slide-3 {
+            background-image: url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+        }
+
+        .slide-4 {
+            background-image: url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+        }
+
+        .slide-5 {
+            background-image: url('https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+        }
+
+        .slide-6 {
+            background-image: url('https://images.unsplash.com/photo-1450101499163-c8848c66ca85?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+        }
+
+        .diagonal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            clip-path: polygon(0 100%, 50% 85%, 100% 100%, 100% 100%, 0 100%);
+            transition: clip-path 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
+            z-index: 2;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+            color: #ffffff;
+            max-width: 800px;
+            padding: 0 2rem;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .hero-title {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(100px);
+            animation: vReveal 1.2s ease-out 0.5s forwards;
+            transition: all 0.6s ease;
+        }
+
+        .hero-logo {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(100px);
+            animation: vReveal 1.2s ease-out 0.5s forwards;
+            transition: all 0.6s ease;
+            max-width: 300px;
+            height: auto;
+            border-radius: 16px;
+            box-shadow: none;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: #e0e8f0;
+            font-weight: 300;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: vReveal 1s ease-out 1.2s forwards;
+        }
+
+        @keyframes vReveal {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(45deg, #64748b, #475569);
+            color: white;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(100, 116, 139, 0.3);
+            opacity: 0;
+            transform: translateY(30px);
+            animation: vReveal 0.8s ease-out 1.8s forwards;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(100, 116, 139, 0.4);
+        }
+
+        /* Main Content */
+        .main-content {
+            position: relative;
+            z-index: 4;
+            background: #ffffff;
+            padding: 4rem 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section {
+            margin-bottom: 4rem;
+        }
+
+        .section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: #374151;
+            text-align: center;
+            font-weight: 700;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+
+        .section h2.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section p {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            color: #6b7280;
+            text-align: center;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+
+        .section p.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Research Areas Grid */
+        .research-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .research-card {
+            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 8px 32px rgba(107, 114, 128, 0.12);
+            transition: all 0.4s ease;
+            border: 1px solid rgba(156, 163, 175, 0.2);
+            opacity: 0;
+            transform: translateY(30px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .research-card.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .research-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #9ca3af, #6b7280);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .research-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .research-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 20px 60px rgba(107, 114, 128, 0.25);
+        }
+
+        .research-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: #6b7280;
+            display: block;
+        }
+
+        .research-card h3 {
+            color: #374151;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .research-card p {
+            color: #6b7280;
+            text-align: left;
+            line-height: 1.7;
+        }
+
+        /* Latest Reports */
+        .reports-section {
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+            padding: 4rem 0;
+        }
+
+        .report-card {
+            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 6px 30px rgba(107, 114, 128, 0.1);
+            transition: all 0.4s ease;
+            border: 1px solid rgba(156, 163, 175, 0.15);
+            opacity: 0;
+            transform: translateY(30px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .report-card.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .report-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(156, 163, 175, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.6s ease;
+            opacity: 0;
+        }
+
+        .report-card:hover::after {
+            opacity: 1;
+            top: -100%;
+            right: -100%;
+        }
+
+        .report-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 50px rgba(107, 114, 128, 0.2);
+        }
+
+        .report-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            color: #9ca3af;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .report-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .report-summary {
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        .read-more {
+            color: #6b7280;
+            text-decoration: none;
+            font-weight: 500;
+            margin-top: 1rem;
+            display: inline-block;
+        }
+
+        .read-more:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+            color: #d1d5db;
+            padding: 4rem 0 2rem 0;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-nav {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-nav a {
+            color: #d1d5db;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .footer-nav a:hover {
+            color: #94a3b8;
+        }
+
+        .footer-copyright {
+            text-align: center;
+            border-top: 1px solid #4b5563;
+            padding-top: 2rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-bg {
+                background-attachment: scroll;
+                background-size: cover;
+                background-position: center bottom;
+            }
+
+            /* Hide Home button on mobile */
+            .nav-links li:first-child {
+                display: none;
+            }
+
+            /* Compact header on mobile */
+            .logo-header {
+                padding: 0.5rem 0;
+            }
+
+            .logo {
+                font-size: 1.2rem;
+            }
+
+            .nav-header {
+                padding: 0.4rem 0;
+            }
+
+            .nav-header.expanded {
+                padding: 0.6rem 0;
+            }
+
+            .nav-links {
+                gap: 1.2rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .nav-links a {
+                font-size: 0.85rem;
+                padding: 0.3rem 0.5rem;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+
+            .research-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .slide {
+                background-attachment: scroll;
+            }
+        }
+
+        /* Financial Terms Tooltip */
+        .financial-term {
+            position: relative;
+            border-bottom: 2px dotted #9ca3af;
+            cursor: help;
+            color: #6b7280;
+        }
+
+        .tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #374151;
+            color: #f3f4f6;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .financial-term:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #374151;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header">
+        <!-- Logo Header Row -->
+        <div class="logo-header" id="logo-header">
+            <a href="#" class="logo">Lorthelas <span>Research</span></a>
+        </div>
+        
+        <!-- Navigation Row -->
+        <div class="nav-header">
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="reports.html">Reports</a></li>
+                    <li><a href="portfolio.html">Portfolio</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-bg">
+            <div class="slideshow-container">
+                <div class="slide slide-1 active"></div>
+                <div class="slide slide-2"></div>
+                <div class="slide slide-3"></div>
+                <div class="slide slide-4"></div>
+                <div class="slide slide-5"></div>
+                <div class="slide slide-6"></div>
+            </div>
+        </div>
+        
+        <div class="diagonal-overlay" id="diagonal-overlay"></div>
+        <div class="hero-content">
+            <h1><img src="lorthelas-logo.png" alt="Lorthelas Research" class="hero-logo"></h1>
+            <p class="hero-subtitle">Capital structuring & Investment strategy</p>
+            <a href="reports.html" class="cta-button">Explore Our Research</a>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            <!-- About Section -->
+            <section class="section" id="about">
+                <div style="max-width: 800px; margin: 0 auto; text-align: center;">
+                    <h2 style="font-size: 2.5rem; color: #374151; margin-bottom: 2rem; font-weight: 700;">About Lorthelas Research</h2>
+                    <p style="font-size: 1.1rem; color: #6b7280; margin-bottom: 3rem; line-height: 1.8;">
+                        At Lorthelas Research, we provide comprehensive analysis of macroeconomic trends, political economy dynamics, and global conflicts to understand their impact on financial markets. Our research covers <span class="financial-term">equities<span class="tooltip">Ownership shares in corporations</span></span>, <span class="financial-term">commodities<span class="tooltip">Raw materials and primary products</span></span>, <span class="financial-term">bonds<span class="tooltip">Debt securities issued by governments and corporations</span></span>, and <span class="financial-term">cryptocurrencies<span class="tooltip">Digital assets secured by cryptography</span></span>, with special focus on Federal Reserve and ECB policy pivots.
+                    </p>
+                    <p style="font-size: 1.1rem; color: #6b7280; margin-bottom: 3rem; line-height: 1.8;">
+                        Our independent approach combines quantitative analysis with qualitative insights, providing institutional and individual investors with actionable intelligence for strategic decision-making in an increasingly complex global environment.
+                    </p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem;">
+                    <div class="research-card">
+                        <div class="icon">🎯</div>
+                        <h3>Independent Analysis</h3>
+                        <p>Unbiased research free from conflicts of interest, providing objective insights and recommendations based solely on rigorous analytical frameworks.</p>
+                    </div>
+                    <div class="research-card">
+                        <div class="icon">📚</div>
+                        <h3>Deep Research</h3>
+                        <p>Comprehensive analysis that goes beyond surface-level observations, incorporating historical context, cross-asset relationships, and global interconnections.</p>
+                    </div>
+                    <div class="research-card">
+                        <div class="icon">⚡</div>
+                        <h3>Timely Insights</h3>
+                        <p>Regular research updates and market commentary that help investors stay ahead of evolving trends and emerging opportunities in global markets.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Research Areas -->
+            <section class="section" id="research">
+                <h2>Research Focus Areas</h2>
+                <div class="research-grid">
+                    <div class="research-card">
+                        <div class="icon">📊</div>
+                        <h3>Macroeconomic Analysis</h3>
+                        <p>In-depth analysis of economic indicators, inflation trends, GDP growth, and their impact on global markets. We track key metrics that drive investment decisions.</p>
+                    </div>
+                    <div class="research-card">
+                        <div class="icon">🌍</div>
+                        <h3>Political Economy</h3>
+                        <p>Understanding how political events, policy changes, and regulatory shifts affect market dynamics and investment opportunities across different regions.</p>
+                    </div>
+                    <div class="research-card">
+                        <div class="icon">⚡</div>
+                        <h3>Global Conflicts Impact</h3>
+                        <p>Analysis of geopolitical tensions, trade wars, and conflicts, examining their ripple effects on commodity prices, supply chains, and market volatility.</p>
+                    </div>
+                    <div class="research-card">
+                        <div class="icon">🏦</div>
+                        <h3>Central Bank Policy</h3>
+                        <p>Monitoring Federal Reserve and ECB policy decisions, interest rate changes, and quantitative easing programs that shape global liquidity conditions.</p>
+                    </div>
+                    <div class="research-card">
+                        <div class="icon">💼</div>
+                        <h3>Multi-Asset Strategy</h3>
+                        <p>Comprehensive coverage of equities, fixed income, commodities, and digital assets, providing insights for diversified portfolio construction.</p>
+                    </div>
+                    <div class="research-card">
+                        <div class="icon">📈</div>
+                        <h3>Capital Structure Analysis</h3>
+                        <p>Detailed examination of corporate capital structures, debt-to-equity ratios, and financing strategies in different market environments.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CTA Section -->
+            <section class="section" style="text-align: center; margin-top: 4rem;">
+                <a href="reports.html" class="cta-button">Reports →</a>
+            </section>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <nav class="footer-nav">
+                <a href="index.html">Home</a>
+                <a href="reports.html">Reports</a>
+                <a href="portfolio.html">Portfolio</a>
+                <a href="contact.html">Contact</a>
+            </nav>
+            <div class="footer-copyright">
+                <p>&copy; 2025 Lorthelas Research. All rights reserved.</p>
+                <p>Independent investment research and analysis</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Automatic slideshow functionality
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function showSlide(index) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[index].classList.add('active');
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            showSlide(currentSlide);
+        }
+
+        // Start automatic slideshow
+        function startSlideshow() {
+            setInterval(nextSlide, 5000); // Change slide every 5 seconds
+        }
+
+        // Initialize slideshow when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            showSlide(0); // Show first slide
+            startSlideshow(); // Start automatic transitions
+        });
+
+        // Header scroll effect with expanding header
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('header');
+            const logoHeader = document.getElementById('logo-header');
+            const navHeader = document.querySelector('.nav-header');
+            const navLinks = document.querySelector('.nav-links');
+            const scrolled = window.pageYOffset;
+            
+            if (scrolled > 50) {
+                header.classList.add('header-scrolled');
+            } else {
+                header.classList.remove('header-scrolled');
+            }
+
+            // Show logo header and expand navigation when scrolled past hero section
+            if (scrolled > window.innerHeight * 0.6) {
+                logoHeader.classList.add('visible');
+                navHeader.classList.add('expanded');
+                navLinks.classList.add('expanded');
+            } else {
+                logoHeader.classList.remove('visible');
+                navHeader.classList.remove('expanded');
+                navLinks.classList.remove('expanded');
+            }
+        });
+
+        // Diagonal reveal effect with V-shape
+        function updateDiagonalOverlay() {
+            const scrolled = window.pageYOffset;
+            const diagonal = document.getElementById('diagonal-overlay');
+            
+            if (scrolled <= window.innerHeight) {
+                const progress = Math.min(scrolled / (window.innerHeight * 0.8), 1);
+                // V-shape reveal that starts from center and expands outward
+                const vPoint = 85 - (progress * 85); // V-point moves up as we scroll
+                diagonal.style.clipPath = `polygon(0 ${100 - (progress * 100)}%, 50% ${vPoint}%, 100% ${100 - (progress * 100)}%, 100% 100%, 0 100%)`;
+            }
+        }
+
+        window.addEventListener('scroll', updateDiagonalOverlay);
+        window.addEventListener('resize', updateDiagonalOverlay);
+
+        // Reveal animations on scroll
+        function revealOnScroll() {
+            const reveals = document.querySelectorAll('.section h2, .section p, .research-card, .report-card');
+            
+            reveals.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementTop < window.innerHeight - elementVisible) {
+                    element.classList.add('revealed');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', revealOnScroll);
+        window.addEventListener('load', revealOnScroll);
+
+        // Stagger animation for research cards
+        function staggerReveal() {
+            const cards = document.querySelectorAll('.research-card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    if (card.classList.contains('revealed')) {
+                        card.style.transitionDelay = `${index * 0.1}s`;
+                    }
+                }, index * 100);
+            });
+        }
+
+        window.addEventListener('scroll', staggerReveal);
+
+        // Initialize financial terms tooltips
+        document.addEventListener('DOMContentLoaded', function() {
+            revealOnScroll();
+            console.log('Lorthelas Research website loaded successfully!');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Reports | Lorthelas Research</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+    <meta name="description" content="Latest research reports on macroeconomic analysis, political economy, and global conflicts impact on financial markets">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+            background: #ffffff;
+        }
+
+        /* Header - always expanded on content pages */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(51, 65, 85, 0.95);
+            backdrop-filter: blur(15px);
+            z-index: 1000;
+            transition: all 0.4s ease;
+        }
+
+        /* Logo Header Row - always visible */
+        .logo-header {
+            padding: 0.8rem 0;
+            text-align: center;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: #94a3b8;
+        }
+
+        /* Navigation Row */
+        .nav-header {
+            padding: 1rem 0;
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 3rem;
+            margin: 0;
+        }
+
+        .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #94a3b8;
+        }
+
+        /* Page Content */
+        .page-content {
+            margin-top: 140px;
+            padding: 4rem 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            color: #374151;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            color: #6b7280;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-tab {
+            padding: 0.75rem 1.5rem;
+            background: #f3f4f6;
+            color: #6b7280;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .filter-tab:hover,
+        .filter-tab.active {
+            background: #374151;
+            color: #ffffff;
+        }
+
+        /* Report Cards */
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .report-card {
+            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: 0 6px 30px rgba(107, 114, 128, 0.1);
+            transition: all 0.4s ease;
+            border: 1px solid rgba(156, 163, 175, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .report-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(156, 163, 175, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.6s ease;
+            opacity: 0;
+        }
+
+        .report-card:hover::after {
+            opacity: 1;
+            top: -100%;
+            right: -100%;
+        }
+
+        .report-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 50px rgba(107, 114, 128, 0.2);
+        }
+
+        .report-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            color: #9ca3af;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .report-category {
+            background: #e5e7eb;
+            color: #374151;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .report-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+
+        .report-summary {
+            color: #6b7280;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .report-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .read-more {
+            color: #374151;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border: 2px solid #374151;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .read-more:hover {
+            background: #374151;
+            color: #ffffff;
+        }
+
+        .download-pdf {
+            color: #6b7280;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .download-pdf:hover {
+            color: #374151;
+        }
+
+        /* Archive Section */
+        .archive-section {
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+            padding: 4rem 0;
+            margin-top: 4rem;
+        }
+
+        .archive-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .archive-item {
+            background: #ffffff;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 3px 15px rgba(107, 114, 128, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .archive-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(107, 114, 128, 0.15);
+        }
+
+        .archive-date {
+            color: #9ca3af;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .archive-title {
+            color: #374151;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .archive-summary {
+            color: #6b7280;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+            color: #d1d5db;
+            padding: 4rem 0 2rem 0;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-nav {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-nav a {
+            color: #d1d5db;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .footer-nav a:hover {
+            color: #94a3b8;
+        }
+
+        .footer-copyright {
+            text-align: center;
+            border-top: 1px solid #4b5563;
+            padding-top: 2rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            /* Hide Home button on mobile */
+            .nav-links li:first-child {
+                display: none;
+            }
+
+            /* Compact header on mobile */
+            .logo-header {
+                padding: 0.5rem 0;
+            }
+
+            .logo {
+                font-size: 1.2rem;
+            }
+
+            .nav-header {
+                padding: 0.6rem 0;
+            }
+
+            .nav-links {
+                gap: 1.2rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .nav-links a {
+                font-size: 0.85rem;
+                padding: 0.3rem 0.5rem;
+            }
+
+            .page-title {
+                font-size: 2.5rem;
+            }
+
+            .reports-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-tabs {
+                gap: 1rem;
+            }
+        }
+
+        /* Financial Terms Tooltip */
+        .financial-term {
+            position: relative;
+            border-bottom: 2px dotted #9ca3af;
+            cursor: help;
+            color: #6b7280;
+        }
+
+        .tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #374151;
+            color: #f3f4f6;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .financial-term:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #374151;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header">
+        <!-- Logo Header Row -->
+        <div class="logo-header">
+            <a href="index.html" class="logo">Lorthelas <span>Research</span></a>
+        </div>
+        
+        <!-- Navigation Row -->
+        <div class="nav-header">
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="reports.html" class="active">Reports</a></li>
+                    <li><a href="portfolio.html">Portfolio</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Page Content -->
+    <div class="page-content">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">Research Reports</h1>
+                <p class="page-subtitle">Comprehensive analysis of macroeconomic trends, political economy dynamics, and their impact on global financial markets</p>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="filter-tabs">
+                <a href="#" class="filter-tab active">All Reports</a>
+                <a href="#" class="filter-tab">Macroeconomic</a>
+                <a href="#" class="filter-tab">Political Economy</a>
+                <a href="#" class="filter-tab">Portfolio Strategy</a>
+                <a href="#" class="filter-tab">Market Analysis</a>
+            </div>
+
+            <!-- Latest Reports -->
+            <div class="reports-grid">
+                <div class="report-card">
+                    <div class="report-meta">
+                        <span>January 15, 2025</span>
+                        <span class="report-category">Macroeconomic</span>
+                    </div>
+                    <h3 class="report-title">Q4 2024 Central Bank Policy Review: Fed & ECB Divergence</h3>
+                    <p class="report-summary">Comprehensive analysis of the Federal Reserve's hawkish stance versus the European Central Bank's dovish approach, examining implications for <span class="financial-term">yield curves<span class="tooltip">Graph showing interest rates across different maturities</span></span> and cross-border capital flows. Key findings include potential impacts on EUR/USD parity and sector rotation patterns across major equity indices.</p>
+                    <div class="report-actions">
+                        <a href="#" class="read-more">Read Report</a>
+                        <a href="#" class="download-pdf">📄 Download PDF</a>
+                    </div>
+                </div>
+
+                <div class="report-card">
+                    <div class="report-meta">
+                        <span>January 10, 2025</span>
+                        <span class="report-category">Geopolitical</span>
+                    </div>
+                    <h3 class="report-title">Energy Markets and European Security: Supply Chain Resilience Analysis</h3>
+                    <p class="report-summary">In-depth examination of European energy independence initiatives and their cascading effects on commodity prices, renewable energy investments, and traditional energy sector valuations. Features <span class="financial-term">volatility<span class="tooltip">Measure of price fluctuations in financial markets</span></span> forecasts for natural gas and oil futures through 2025.</p>
+                    <div class="report-actions">
+                        <a href="#" class="read-more">Read Report</a>
+                        <a href="#" class="download-pdf">📄 Download PDF</a>
+                    </div>
+                </div>
+
+                <div class="report-card">
+                    <div class="report-meta">
+                        <span>January 5, 2025</span>
+                        <span class="report-category">Portfolio Strategy</span>
+                    </div>
+                    <h3 class="report-title">2025 Asset Allocation Framework: Multi-Asset Strategic Positioning</h3>
+                    <p class="report-summary">Strategic portfolio positioning framework for the new year, incorporating inflation hedging mechanisms, growth opportunities, and defensive positioning strategies. Detailed analysis of <span class="financial-term">correlation matrices<span class="tooltip">Statistical measure of how different assets move together</span></span> and optimal allocation across traditional and alternative investments.</p>
+                    <div class="report-actions">
+                        <a href="#" class="read-more">Read Report</a>
+                        <a href="#" class="download-pdf">📄 Download PDF</a>
+                    </div>
+                </div>
+
+                <div class="report-card">
+                    <div class="report-meta">
+                        <span>December 28, 2024</span>
+                        <span class="report-category">Market Analysis</span>
+                    </div>
+                    <h3 class="report-title">Cryptocurrency Market Structure: Institutional Adoption Trends</h3>
+                    <p class="report-summary">Analysis of institutional cryptocurrency adoption patterns and their implications for traditional asset allocation models. Examination of regulatory developments, market infrastructure improvements, and correlation dynamics with traditional financial assets.</p>
+                    <div class="report-actions">
+                        <a href="#" class="read-more">Read Report</a>
+                        <a href="#" class="download-pdf">📄 Download PDF</a>
+                    </div>
+                </div>
+
+                <div class="report-card">
+                    <div class="report-meta">
+                        <span>December 20, 2024</span>
+                        <span class="report-category">Macroeconomic</span>
+                    </div>
+                    <h3 class="report-title">Global Inflation Dynamics: Regional Divergence and Policy Implications</h3>
+                    <p class="report-summary">Comparative analysis of inflation trends across major economies, examining structural drivers, policy responses, and implications for currency markets. Special focus on emerging market dynamics and their integration with global financial flows.</p>
+                    <div class="report-actions">
+                        <a href="#" class="read-more">Read Report</a>
+                        <a href="#" class="download-pdf">📄 Download PDF</a>
+                    </div>
+                </div>
+
+                <div class="report-card">
+                    <div class="report-meta">
+                        <span>December 15, 2024</span>
+                        <span class="report-category">Political Economy</span>
+                    </div>
+                    <h3 class="report-title">Trade Policy Evolution: Impact on Global Supply Chains</h3>
+                    <p class="report-summary">Assessment of evolving trade relationships and their impact on global supply chain configurations. Analysis of nearshoring trends, tariff implications, and sector-specific vulnerabilities in the context of changing geopolitical dynamics.</p>
+                    <div class="report-actions">
+                        <a href="#" class="read-more">Read Report</a>
+                        <a href="#" class="download-pdf">📄 Download PDF</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Archive Section -->
+        <div class="archive-section">
+            <div class="container">
+                <h2 style="text-align: center; margin-bottom: 3rem; color: #374151; font-size: 2.5rem;">Report Archive</h2>
+                <div class="archive-grid">
+                    <div class="archive-item">
+                        <div class="archive-date">November 2024</div>
+                        <div class="archive-title">Monthly Market Review</div>
+                        <div class="archive-summary">Comprehensive market analysis and outlook</div>
+                    </div>
+                    <div class="archive-item">
+                        <div class="archive-date">October 2024</div>
+                        <div class="archive-title">Q3 Economic Assessment</div>
+                        <div class="archive-summary">Quarterly economic indicators and trends</div>
+                    </div>
+                    <div class="archive-item">
+                        <div class="archive-date">September 2024</div>
+                        <div class="archive-title">Central Bank Policy Update</div>
+                        <div class="archive-summary">Analysis of global monetary policy shifts</div>
+                    </div>
+                    <div class="archive-item">
+                        <div class="archive-date">August 2024</div>
+                        <div class="archive-title">Commodity Markets Deep Dive</div>
+                        <div class="archive-summary">Comprehensive commodity sector analysis</div>
+                    </div>
+                    <div class="archive-item">
+                        <div class="archive-date">July 2024</div>
+                        <div class="archive-title">ESG Investment Trends</div>
+                        <div class="archive-summary">Sustainable investing market developments</div>
+                    </div>
+                    <div class="archive-item">
+                        <div class="archive-date">June 2024</div>
+                        <div class="archive-title">H1 2024 Market Review</div>
+                        <div class="archive-summary">Mid-year comprehensive market assessment</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <nav class="footer-nav">
+                <a href="index.html">Home</a>
+                <a href="reports.html">Reports</a>
+                <a href="portfolio.html">Portfolio</a>
+                <a href="contact.html">Contact</a>
+            </nav>
+            <div class="footer-copyright">
+                <p>&copy; 2025 Lorthelas Research. All rights reserved.</p>
+                <p>Independent investment research and analysis</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Filter functionality
+        document.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all tabs
+                document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Here you would implement filtering logic
+                console.log('Filter:', this.textContent);
+            });
+        });
+
+        // Initialize tooltips
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Reports page loaded successfully!');
+        });
+    </script>
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script>
+  if (window.netlifyIdentity) {
+    window.netlifyIdentity.on("init", user => {
+      if (!user) {
+        window.netlifyIdentity.on("login", () => {
+          document.location.href = "/admin/";
+        });
+      }
+    });
+  }
+</script>
+</body>
+</html>

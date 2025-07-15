@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact | Lorthelas Research</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <meta name="description" content="Contact Lorthelas Research for investment research inquiries, consultations, and partnership opportunities">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+            background: #ffffff;
+        }
+
+        /* Header - always expanded on content pages */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(51, 65, 85, 0.95);
+            backdrop-filter: blur(15px);
+            z-index: 1000;
+            transition: all 0.4s ease;
+        }
+
+        .logo-header {
+            padding: 0.8rem 0;
+            text-align: center;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: #94a3b8;
+        }
+
+        .nav-header {
+            padding: 1rem 0;
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 3rem;
+            margin: 0;
+        }
+
+        .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #94a3b8;
+        }
+
+        /* Page Content */
+        .page-content {
+            margin-top: 140px;
+            padding: 4rem 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            color: #374151;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            color: #6b7280;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* About Section */
+        .about-section {
+            margin-bottom: 6rem;
+        }
+
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .about-title {
+            font-size: 2.5rem;
+            color: #374151;
+            margin-bottom: 2rem;
+            font-weight: 700;
+        }
+
+        .about-description {
+            font-size: 1.1rem;
+            color: #6b7280;
+            margin-bottom: 3rem;
+            line-height: 1.8;
+        }
+
+        .about-highlights {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .highlight-card {
+            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: 0 6px 30px rgba(107, 114, 128, 0.1);
+            transition: all 0.4s ease;
+            border: 1px solid rgba(156, 163, 175, 0.15);
+        }
+
+        .highlight-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(107, 114, 128, 0.15);
+        }
+
+        .highlight-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .highlight-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .highlight-description {
+            color: #6b7280;
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+            padding: 4rem 0;
+            margin: 4rem 0;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 4rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .contact-info {
+            background: #ffffff;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(107, 114, 128, 0.12);
+        }
+
+        .contact-title {
+            font-size: 2rem;
+            color: #374151;
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+
+        .contact-icon {
+            font-size: 1.5rem;
+            color: #6b7280;
+            width: 24px;
+            text-align: center;
+        }
+
+        .contact-details {
+            flex: 1;
+        }
+
+        .contact-label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.25rem;
+        }
+
+        .contact-value {
+            color: #6b7280;
+        }
+
+        .contact-form {
+            background: #ffffff;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(107, 114, 128, 0.12);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #6b7280;
+        }
+
+        .form-textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        .form-button {
+            background: linear-gradient(45deg, #374151, #1f2937);
+            color: #ffffff;
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .form-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(55, 65, 81, 0.3);
+        }
+
+        /* Services Section */
+        .services-section {
+            margin: 6rem 0;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .service-card {
+            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 8px 32px rgba(107, 114, 128, 0.12);
+            transition: all 0.4s ease;
+            border: 1px solid rgba(156, 163, 175, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #9ca3af, #6b7280);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .service-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .service-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 48px rgba(107, 114, 128, 0.2);
+        }
+
+        .service-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: #6b7280;
+        }
+
+        .service-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #374151;
+            margin-bottom: 1rem;
+        }
+
+        .service-description {
+            color: #6b7280;
+            line-height: 1.7;
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+            color: #d1d5db;
+            padding: 4rem 0 2rem 0;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-nav {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-nav a {
+            color: #d1d5db;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .footer-nav a:hover {
+            color: #94a3b8;
+        }
+
+        .footer-copyright {
+            text-align: center;
+            border-top: 1px solid #4b5563;
+            padding-top: 2rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            /* Hide Home button on mobile */
+            .nav-links li:first-child {
+                display: none;
+            }
+
+            /* Compact header on mobile */
+            .logo-header {
+                padding: 0.5rem 0;
+            }
+
+            .logo {
+                font-size: 1.2rem;
+            }
+
+            .nav-header {
+                padding: 0.6rem 0;
+            }
+
+            .nav-links {
+                gap: 1.2rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .nav-links a {
+                font-size: 0.85rem;
+                padding: 0.3rem 0.5rem;
+            }
+
+            .page-title {
+                font-size: 2.5rem;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .about-highlights {
+                grid-template-columns: 1fr;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Contact Hero Image Animation */
+        .contact-hero-image {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s ease-out;
+            max-width: 100%;
+            height: auto;
+            border-radius: 16px;
+            box-shadow: none;
+            max-height: 400px;
+            object-fit: cover;
+        }
+
+        .contact-hero-image.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .financial-term {
+            position: relative;
+            border-bottom: 2px dotted #9ca3af;
+            cursor: help;
+            color: #6b7280;
+        }
+
+        .tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #374151;
+            color: #f3f4f6;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .financial-term:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #374151;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header">
+        <!-- Logo Header Row -->
+        <div class="logo-header">
+            <a href="index.html" class="logo">Lorthelas <span>Research</span></a>
+        </div>
+        
+        <!-- Navigation Row -->
+        <div class="nav-header">
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="reports.html">Reports</a></li>
+                    <li><a href="portfolio.html">Portfolio</a></li>
+                    <li><a href="contact.html" class="active">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Page Content -->
+    <div class="page-content">
+        <div class="container">
+            <!-- Hero Image Section -->
+            <div style="text-align: center; margin-bottom: 4rem;">
+                <img src="contact-hero.png" alt="Lorthelas Research" class="contact-hero-image">
+            </div>
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">Contact Us</h1>
+                <p class="page-subtitle">Get in touch for research inquiries, consultations, and partnership opportunities</p>
+            </div>
+
+            <!-- Services Section -->
+            <div class="services-section">
+                <h2 style="text-align: center; font-size: 2.5rem; color: #374151; margin-bottom: 1rem;">Our Research Services</h2>
+                <p style="text-align: center; color: #6b7280; max-width: 600px; margin: 0 auto 3rem auto; font-size: 1.1rem;">Comprehensive research solutions tailored for institutional investors, asset managers, and sophisticated individual investors</p>
+                
+                <div class="services-grid">
+                    <div class="service-card">
+                        <div class="service-icon">📊</div>
+                        <h3 class="service-title">Market Research Reports</h3>
+                        <p class="service-description">Regular in-depth reports covering macroeconomic developments, sector analysis, and cross-asset investment themes with actionable insights and recommendations.</p>
+                    </div>
+                    <div class="service-card">
+                        <div class="service-icon">🎯</div>
+                        <h3 class="service-title">Portfolio Strategy Consulting</h3>
+                        <p class="service-description">Customized portfolio allocation advice based on client-specific risk tolerance, investment objectives, and market outlook assessments.</p>
+                    </div>
+                    <div class="service-card">
+                        <div class="service-icon">🔔</div>
+                        <h3 class="service-title">Market Commentary</h3>
+                        <p class="service-description">Timely analysis of market developments, policy announcements, and geopolitical events that impact global financial markets and investment strategies.</p>
+                    </div>
+                    <div class="service-card">
+                        <div class="service-icon">💡</div>
+                        <h3 class="service-title">Investment Themes</h3>
+                        <p class="service-description">Identification and analysis of long-term structural trends and investment themes that present opportunities for alpha generation and portfolio diversification.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Section -->
+        <div class="contact-section">
+            <div class="container">
+                <h2 style="text-align: center; font-size: 2.5rem; color: #374151; margin-bottom: 3rem;">Get In Touch</h2>
+                <div style="max-width: 600px; margin: 0 auto;">
+                    <div class="contact-form">
+                        <h3 class="contact-title">Send us a Message</h3>
+                        <p style="color: #6b7280; margin-bottom: 2rem; text-align: center;">
+                            Fill out the form below with your inquiry, or you can send us an email directly at 
+                            <a href="mailto:research@lorthelas.com" style="color: #374151; font-weight: 600; text-decoration: none;">research@lorthelas.com</a>
+                        </p>
+                        <form>
+                            <div class="form-group">
+                                <label class="form-label" for="name">Name *</label>
+                                <input type="text" id="name" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="email">Email *</label>
+                                <input type="email" id="email" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="company">Company/Organization</label>
+                                <input type="text" id="company" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="subject">Subject *</label>
+                                <input type="text" id="subject" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="message">Message *</label>
+                                <textarea id="message" class="form-input form-textarea" required placeholder="Please describe your inquiry or research needs..."></textarea>
+                            </div>
+                            <button type="submit" class="form-button">Send Message</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <nav class="footer-nav">
+                <a href="index.html">Home</a>
+                <a href="reports.html">Reports</a>
+                <a href="portfolio.html">Portfolio</a>
+                <a href="contact.html">Contact</a>
+            </nav>
+            <div class="footer-copyright">
+                <p>&copy; 2025 Lorthelas Research. All rights reserved.</p>
+                <p>Independent investment research and analysis</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Form submission
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Thank you for your message! We\'ll get back to you soon.');
+            this.reset();
+        });
+
+        // Reveal contact hero image on scroll
+        function revealContactImage() {
+            const heroImage = document.querySelector('.contact-hero-image');
+            if (heroImage) {
+                const elementTop = heroImage.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementTop < window.innerHeight - elementVisible) {
+                    heroImage.classList.add('revealed');
+                }
+            }
+        }
+
+        window.addEventListener('scroll', revealContactImage);
+        window.addEventListener('load', revealContactImage);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            revealContactImage(); // Check on page load
+            console.log('Contact page loaded successfully!');
+        });
+    </script>
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script>
+  if (window.netlifyIdentity) {
+    window.netlifyIdentity.on("init", user => {
+      if (!user) {
+        window.netlifyIdentity.on("login", () => {
+          document.location.href = "/admin/";
+        });
+      }
+    });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Strategy | Lorthelas Research</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+    <meta name="description" content="Strategic portfolio insights, asset allocation methodology, and current market positioning">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+            background: #ffffff;
+        }
+
+        /* Header - always expanded on content pages */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(51, 65, 85, 0.95);
+            backdrop-filter: blur(15px);
+            z-index: 1000;
+            transition: all 0.4s ease;
+        }
+
+        .logo-header {
+            padding: 0.8rem 0;
+            text-align: center;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: #94a3b8;
+        }
+
+        .nav-header {
+            padding: 1rem 0;
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 3rem;
+            margin: 0;
+        }
+
+        .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #94a3b8;
+        }
+
+        /* Page Content */
+        .page-content {
+            margin-top: 140px;
+            padding: 4rem 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            color: #374151;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            color: #6b7280;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Methodology Section */
+        .methodology-section {
+            margin-bottom: 4rem;
+        }
+
+        .methodology-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .methodology-card {
+            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 8px 32px rgba(107, 114, 128, 0.12);
+            transition: all 0.4s ease;
+            border: 1px solid rgba(156, 163, 175, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .methodology-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #9ca3af, #6b7280);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .methodology-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .methodology-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 48px rgba(107, 114, 128, 0.2);
+        }
+
+        .methodology-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: #6b7280;
+            display: block;
+        }
+
+        .methodology-card h3 {
+            color: #374151;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .methodology-card p {
+            color: #6b7280;
+            line-height: 1.7;
+        }
+
+        /* Current Positioning Section */
+        .positioning-section {
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+            padding: 4rem 0;
+            margin: 4rem 0;
+        }
+
+        .positioning-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .positioning-title {
+            font-size: 2.5rem;
+            color: #374151;
+            margin-bottom: 2rem;
+            font-weight: 700;
+        }
+
+        .positioning-description {
+            font-size: 1.1rem;
+            color: #6b7280;
+            margin-bottom: 3rem;
+            line-height: 1.7;
+        }
+
+        .positioning-highlights {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .highlight-item {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(107, 114, 128, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .highlight-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(107, 114, 128, 0.15);
+        }
+
+        .highlight-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .highlight-title {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .highlight-description {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        /* Allocation Chart Section */
+        .allocation-section {
+            margin: 4rem 0;
+        }
+
+        .allocation-chart {
+            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 8px 32px rgba(107, 114, 128, 0.12);
+            border: 1px solid rgba(156, 163, 175, 0.2);
+            text-align: center;
+        }
+
+        .chart-title {
+            font-size: 1.8rem;
+            color: #374151;
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+
+        .chart-placeholder {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 2rem;
+        }
+
+        .allocation-legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+        }
+
+        .legend-label {
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .legend-percentage {
+            color: #6b7280;
+            margin-left: auto;
+        }
+
+        /* Performance Metrics */
+        .metrics-section {
+            margin: 4rem 0;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .metric-card {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(107, 114, 128, 0.1);
+            text-align: center;
+            border: 1px solid rgba(156, 163, 175, 0.1);
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            color: #6b7280;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-period {
+            color: #9ca3af;
+            font-size: 0.9rem;
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+            color: #d1d5db;
+            padding: 4rem 0 2rem 0;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-nav {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-nav a {
+            color: #d1d5db;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .footer-nav a:hover {
+            color: #94a3b8;
+        }
+
+        .footer-copyright {
+            text-align: center;
+            border-top: 1px solid #4b5563;
+            padding-top: 2rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            /* Hide Home button on mobile */
+            .nav-links li:first-child {
+                display: none;
+            }
+
+            /* Compact header on mobile */
+            .logo-header {
+                padding: 0.5rem 0;
+            }
+
+            .logo {
+                font-size: 1.2rem;
+            }
+
+            .nav-header {
+                padding: 0.6rem 0;
+            }
+
+            .nav-links {
+                gap: 1.2rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .nav-links a {
+                font-size: 0.85rem;
+                padding: 0.3rem 0.5rem;
+            }
+
+            .page-title {
+                font-size: 2.5rem;
+            }
+
+            .methodology-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Financial Terms Tooltip */
+        .financial-term {
+            position: relative;
+            border-bottom: 2px dotted #9ca3af;
+            cursor: help;
+            color: #6b7280;
+        }
+
+        .tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #374151;
+            color: #f3f4f6;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .financial-term:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #374151;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header">
+        <!-- Logo Header Row -->
+        <div class="logo-header">
+            <a href="index.html" class="logo">Lorthelas <span>Research</span></a>
+        </div>
+        
+        <!-- Navigation Row -->
+        <div class="nav-header">
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="reports.html">Reports</a></li>
+                    <li><a href="portfolio.html" class="active">Portfolio</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Page Content -->
+    <div class="page-content">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">Portfolio Strategy</h1>
+                <p class="page-subtitle">Systematic approach to asset allocation combining macroeconomic analysis with tactical positioning for optimal risk-adjusted returns</p>
+            </div>
+
+            <!-- Methodology Section -->
+            <div class="methodology-section">
+                <h2 style="text-align: center; font-size: 2.5rem; color: #374151; margin-bottom: 1rem;">Investment Methodology</h2>
+                <p style="text-align: center; color: #6b7280; max-width: 800px; margin: 0 auto 3rem auto; font-size: 1.1rem;">Our portfolio construction framework emphasizes diversification, risk management, and adaptive positioning based on evolving market conditions and macroeconomic fundamentals.</p>
+                
+                <div class="methodology-grid">
+                    <div class="methodology-card">
+                        <div class="icon">🎯</div>
+                        <h3>Strategic Asset Allocation</h3>
+                        <p>Long-term allocation framework based on historical risk-return profiles, correlations, and expected market conditions. Emphasis on <span class="financial-term">diversification<span class="tooltip">Spreading investments across different assets to reduce risk</span></span> across asset classes, geographic regions, and investment styles.</p>
+                    </div>
+                    <div class="methodology-card">
+                        <div class="icon">📊</div>
+                        <h3>Tactical Positioning</h3>
+                        <p>Dynamic adjustment of portfolio weights based on short to medium-term market opportunities and risks. Incorporates technical analysis, sentiment indicators, and <span class="financial-term">momentum factors<span class="tooltip">Tendency for assets to continue moving in their current direction</span></span>.</p>
+                    </div>
+                    <div class="methodology-card">
+                        <div class="icon">🛡️</div>
+                        <h3>Risk Management</h3>
+                        <p>Comprehensive risk assessment including <span class="financial-term">value at risk<span class="tooltip">Statistical measure of potential loss over a specific time period</span></span>, stress testing, and scenario analysis. Focus on capital preservation during market downturns while maintaining upside participation.</p>
+                    </div>
+                    <div class="methodology-card">
+                        <div class="icon">🔄</div>
+                        <h3>Rebalancing Discipline</h3>
+                        <p>Systematic rebalancing approach combining calendar-based and threshold-based triggers. Maintains target allocations while harvesting gains and managing portfolio drift over time.</p>
+                    </div>
+                    <div class="methodology-card">
+                        <div class="icon">🌍</div>
+                        <h3>Global Perspective</h3>
+                        <p>Integration of global macroeconomic analysis, geopolitical developments, and cross-border capital flows. Emphasis on identifying regional opportunities and managing currency exposure.</p>
+                    </div>
+                    <div class="methodology-card">
+                        <div class="icon">⚖️</div>
+                        <h3>ESG Integration</h3>
+                        <p>Incorporation of environmental, social, and governance factors in investment decisions. Focus on sustainable business models and companies positioned for long-term success in a changing world.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Current Market Positioning -->
+            <div class="positioning-section">
+                <div class="container">
+                    <div class="positioning-content">
+                        <h2 class="positioning-title">Current Market Positioning</h2>
+                        <p class="positioning-description">Based on our macroeconomic analysis and market assessment, we currently favor a defensive positioning with selective growth opportunities. Our strategy emphasizes capital preservation while maintaining exposure to structural growth themes and inflation-protected assets.</p>
+                        
+                        <div class="positioning-highlights">
+                            <div class="highlight-item">
+                                <div class="highlight-icon">🏦</div>
+                                <div class="highlight-title">Fixed Income Focus</div>
+                                <div class="highlight-description">Overweight in short to intermediate duration bonds with inflation protection</div>
+                            </div>
+                            <div class="highlight-item">
+                                <div class="highlight-icon">🏭</div>
+                                <div class="highlight-title">Quality Equity Selection</div>
+                                <div class="highlight-description">Emphasis on companies with strong balance sheets and sustainable competitive advantages</div>
+                            </div>
+                            <div class="highlight-item">
+                                <div class="highlight-icon">🛡️</div>
+                                <div class="highlight-title">Commodity Exposure</div>
+                                <div class="highlight-description">Strategic allocation to precious metals and energy as inflation hedges</div>
+                            </div>
+                            <div class="highlight-item">
+                                <div class="highlight-icon">💰</div>
+                                <div class="highlight-title">Cash Management</div>
+                                <div class="highlight-description">Elevated cash positions for defensive purposes and tactical opportunities</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Asset Allocation Chart -->
+            <div class="allocation-section">
+                <div class="allocation-chart">
+                    <h3 class="chart-title">Strategic Asset Allocation</h3>
+                    <div class="chart-placeholder">
+                        [Interactive Allocation Chart Would Appear Here]
+                    </div>
+                    <div class="allocation-legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #374151;"></div>
+                            <span class="legend-label">Equities</span>
+                            <span class="legend-percentage">45%</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #6b7280;"></div>
+                            <span class="legend-label">Fixed Income</span>
+                            <span class="legend-percentage">30%</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #9ca3af;"></div>
+                            <span class="legend-label">Commodities</span>
+                            <span class="legend-percentage">10%</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #d1d5db;"></div>
+                            <span class="legend-label">Alternatives</span>
+                            <span class="legend-percentage">10%</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #f3f4f6;"></div>
+                            <span class="legend-label">Cash</span>
+                            <span class="legend-percentage">5%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Metrics -->
+            <div class="metrics-section">
+                <h2 style="text-align: center; font-size: 2.5rem; color: #374151; margin-bottom: 3rem;">Key Performance Metrics</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value">8.7%</div>
+                        <div class="metric-label">Annual Return</div>
+                        <div class="metric-period">3-Year Average</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">1.24</div>
+                        <div class="metric-label"><span class="financial-term">Sharpe Ratio<span class="tooltip">Risk-adjusted return measure</span></span></div>
+                        <div class="metric-period">3-Year Period</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">12.3%</div>
+                        <div class="metric-label">Volatility</div>
+                        <div class="metric-period">Annualized</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">-8.2%</div>
+                        <div class="metric-label">Max Drawdown</div>
+                        <div class="metric-period">Since Inception</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">0.72</div>
+                        <div class="metric-label">Beta</div>
+                        <div class="metric-period">vs Global Equity</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">+2.1%</div>
+                        <div class="metric-label">Alpha</div>
+                        <div class="metric-period">Annualized</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <nav class="footer-nav">
+                <a href="index.html">Home</a>
+                <a href="reports.html">Reports</a>
+                <a href="portfolio.html">Portfolio</a>
+                <a href="contact.html">Contact</a>
+            </nav>
+            <div class="footer-copyright">
+                <p>&copy; 2025 Lorthelas Research. All rights reserved.</p>
+                <p>Independent investment research and analysis</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Portfolio page loaded successfully!');
+        });
+    </script>
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script>
+  if (window.netlifyIdentity) {
+    window.netlifyIdentity.on("init", user => {
+      if (!user) {
+        window.netlifyIdentity.on("login", () => {
+          document.location.href = "/admin/";
+        });
+      }
+    });
+  }
+</script>
+</body>
+</html>
