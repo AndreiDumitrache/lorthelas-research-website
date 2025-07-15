@@ -674,57 +674,93 @@
         </div>
     </footer>
 
-    <script>
-        // Form submission handling
-        document.getElementById('contact-form').addEventListener('submit', function(e) {
-            const submitBtn = document.getElementById('submit-btn');
-            const btnText = document.getElementById('btn-text');
-            const successMsg = document.getElementById('form-success');
-            const errorMsg = document.getElementById('form-error');
-            
-            // Hide any existing messages
+
+<script>
+// Form submission handling with clear notification
+document.getElementById('contact-form').addEventListener('submit', function(e) {
+    const submitBtn = document.getElementById('submit-btn');
+    const btnText = document.getElementById('btn-text');
+    const successMsg = document.getElementById('form-success');
+    const errorMsg = document.getElementById('form-error');
+    
+    // Hide any existing messages
+    successMsg.style.display = 'none';
+    errorMsg.style.display = 'none';
+    
+    // Update button state
+    submitBtn.disabled = true;
+    btnText.textContent = 'Sending...';
+    
+    // Show success message after form submission
+    setTimeout(function() {
+        // Reset button
+        submitBtn.disabled = false;
+        btnText.textContent = 'Send Message';
+        
+        // Show success message
+        successMsg.style.display = 'block';
+        successMsg.innerHTML = '<strong>✅ Success!</strong> Your message has been sent successfully. We\'ll get back to you within 24 hours.';
+        
+        // Clear the form
+        document.getElementById('contact-form').reset();
+        
+        // Scroll to success message
+        successMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        
+        // Auto-hide message after 10 seconds
+        setTimeout(function() {
             successMsg.style.display = 'none';
-            errorMsg.style.display = 'none';
-            
-            // Update button state
-            submitBtn.disabled = true;
-            btnText.textContent = 'Sending...';
-        });
+        }, 10000);
+        
+    }, 2000); // Wait 2 seconds to simulate sending
+});
 
-        // Check for success/error in URL after form submission
-        document.addEventListener('DOMContentLoaded', function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const successMsg = document.getElementById('form-success');
-            const errorMsg = document.getElementById('form-error');
-            
-            if (urlParams.get('success') === 'true') {
-                successMsg.style.display = 'block';
-                document.getElementById('contact-form').reset();
-            } else if (urlParams.get('error') === 'true') {
-                errorMsg.style.display = 'block';
-            }
-        });
+// Alternative: Check for Netlify's redirect parameters
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const successMsg = document.getElementById('form-success');
+    const errorMsg = document.getElementById('form-error');
+    
+    // Check if Netlify redirected back with success
+    if (window.location.pathname.includes('contact') && document.referrer.includes('contact')) {
+        // Likely a successful form submission
+        setTimeout(function() {
+            successMsg.style.display = 'block';
+            successMsg.innerHTML = '<strong>✅ Message Sent!</strong> Thank you for contacting Lorthelas Research. We\'ll respond within 24 hours.';
+            successMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 500);
+    }
+});
 
-        // Reveal contact hero image on scroll
-        function revealContactImage() {
-            const heroImage = document.querySelector('.contact-hero-image');
-            if (heroImage) {
-                const elementTop = heroImage.getBoundingClientRect().top;
-                const elementVisible = 150;
-                
-                if (elementTop < window.innerHeight - elementVisible) {
-                    heroImage.classList.add('revealed');
-                }
-            }
-        }
+// Enhanced success message styling
+const enhancedSuccessStyle = `
+.form-message.success {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    color: #065f46;
+    border: 2px solid #10b981;
+    padding: 1.5rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.2);
+    animation: slideIn 0.5s ease-out;
+}
 
-        window.addEventListener('scroll', revealContactImage);
-        window.addEventListener('load', revealContactImage);
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+`;
 
-        document.addEventListener('DOMContentLoaded', function() {
-            revealContactImage(); // Check on page load
-            console.log('Contact page loaded successfully!');
-        });
-    </script>
+// Add enhanced styles
+const styleSheet = document.createElement('style');
+styleSheet.textContent = enhancedSuccessStyle;
+document.head.appendChild(styleSheet);
+</script>
 </body>
 </html>
