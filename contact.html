@@ -761,6 +761,38 @@ const enhancedSuccessStyle = `
 const styleSheet = document.createElement('style');
 styleSheet.textContent = enhancedSuccessStyle;
 document.head.appendChild(styleSheet);
+    // Reveal contact hero image on scroll
+function revealContactImage() {
+    const heroImage = document.querySelector('.contact-hero-image');
+    if (heroImage) {
+        const elementTop = heroImage.getBoundingClientRect().top;
+        const elementVisible = 150;
+        
+        if (elementTop < window.innerHeight - elementVisible) {
+            heroImage.classList.add('revealed');
+        }
+    }
+}
+
+// Add immediate reveal on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Immediate reveal (for when image is already in viewport)
+    const heroImage = document.querySelector('.contact-hero-image');
+    if (heroImage) {
+        // Check if image is in viewport immediately
+        const rect = heroImage.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+            heroImage.classList.add('revealed');
+        }
+    }
+    
+    // Also set up scroll listener
+    revealContactImage();
+});
+
+// Keep scroll listener
+window.addEventListener('scroll', revealContactImage);
+window.addEventListener('load', revealContactImage);
 </script>
 </body>
 </html>
