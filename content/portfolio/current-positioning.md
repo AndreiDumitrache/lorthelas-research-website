@@ -20,7 +20,7 @@ allocation:
     percentage: 60
     color: "#f3f4f6"
 metrics:
-  annual_return: 8.7%
+  annual_return: 9.1%
   sharpe_ratio: "1.23"
   volatility: 12.8%
   max_drawdown: -8.0%
