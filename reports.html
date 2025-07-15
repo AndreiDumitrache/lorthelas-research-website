@@ -745,6 +745,8 @@
         <div style="margin-bottom: 1rem; font-weight: bold; font-size: 1.1rem; color: #374151;">Share Report</div>
         <div style="margin-bottom: 1rem; color: #6b7280; font-size: 0.9rem;">${title}</div>
         <button onclick="shareViaEmail('${title.replace(/'/g, "\\'")}', '${filename}')" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer; transition: background 0.2s;">📧 Share via Email</button>
+        <button onclick="shareViaLinkedIn('${title.replace(/'/g, "\\'")}', '${filename}')" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer; transition: background 0.2s;">💼 Share on LinkedIn</button>
+        <button onclick="shareViaTwitter('${title.replace(/'/g, "\\'")}', '${filename}')" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer; transition: background 0.2s;">🐦 Share on Twitter</button>
         <button onclick="copyReportLink('${filename}')" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer; transition: background 0.2s;">🔗 Copy Link</button>
         <button onclick="closeShareMenu()" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: #f8fafc; cursor: pointer;">❌ Close</button>
     `;
