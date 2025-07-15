@@ -1,10 +1,8 @@
 backend:
   name: git-gateway
   branch: main
-
 media_folder: "images"
 public_folder: "/images"
-
 collections:
   - name: "reports"
     label: "Research Reports"
@@ -18,6 +16,41 @@ collections:
       - {label: "Summary", name: "summary", widget: "text"}
       - {label: "Content", name: "body", widget: "markdown"}
       - {label: "PDF File", name: "pdf", widget: "file", required: false}
+
+  - name: "portfolio"
+    label: "Portfolio Strategy"
+    files:
+      - name: "current-positioning"
+        label: "Current Market Positioning"
+        file: "content/portfolio/current-positioning.md"
+        fields:
+          - {label: "Title", name: "title", widget: "string"}
+          - {label: "Last Updated", name: "date", widget: "datetime"}
+          - {label: "Market Outlook", name: "outlook", widget: "text"}
+          - label: "Asset Allocation"
+            name: "allocation"
+            widget: "list"
+            fields:
+              - {label: "Asset Class", name: "asset", widget: "string"}
+              - {label: "Percentage", name: "percentage", widget: "number"}
+              - {label: "Color", name: "color", widget: "color"}
+          - label: "Key Performance Metrics"
+            name: "metrics"
+            widget: "object"
+            fields:
+              - {label: "Annual Return", name: "annual_return", widget: "string"}
+              - {label: "Sharpe Ratio", name: "sharpe_ratio", widget: "string"}
+              - {label: "Volatility", name: "volatility", widget: "string"}
+              - {label: "Max Drawdown", name: "max_drawdown", widget: "string"}
+              - {label: "Beta", name: "beta", widget: "string"}
+              - {label: "Alpha", name: "alpha", widget: "string"}
+          - label: "Positioning Highlights"
+            name: "highlights"
+            widget: "list"
+            fields:
+              - {label: "Icon", name: "icon", widget: "string"}
+              - {label: "Title", name: "title", widget: "string"}
+              - {label: "Description", name: "description", widget: "text"}
 
   - name: "settings"
     label: "Site Settings"
