@@ -1,0 +1,7 @@
+/contact /contact.html 200
+/reports /reports.html 200
+/portfolio /portfolio.html 200
+/home /index.html 200
+
+# Handle www vs non-www
+https://www.lorthelas.com/* https://lorthelas.com/:splat 301!
