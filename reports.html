@@ -4,13 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Research Reports | Lorthelas Research</title>
-<link rel="icon" type="image/png" href="favicon.png">
-<link rel="apple-touch-icon" href="favicon.png">
     <meta name="description" content="Latest research reports on macroeconomic analysis, political economy, and global conflicts impact on financial markets">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* Keep all your existing styles - just copying them here */
         * {
             margin: 0;
             padding: 0;
@@ -25,7 +24,6 @@
             background: #ffffff;
         }
 
-        /* Header - always expanded on content pages */
         header {
             position: fixed;
             top: 0;
@@ -37,7 +35,6 @@
             transition: all 0.4s ease;
         }
 
-        /* Logo Header Row - always visible */
         .logo-header {
             padding: 0.8rem 0;
             text-align: center;
@@ -55,7 +52,6 @@
             color: #94a3b8;
         }
 
-        /* Navigation Row */
         .nav-header {
             padding: 1rem 0;
         }
@@ -89,7 +85,6 @@
             color: #94a3b8;
         }
 
-        /* Page Content */
         .page-content {
             margin-top: 140px;
             padding: 4rem 0;
@@ -120,7 +115,6 @@
             margin: 0 auto;
         }
 
-        /* Filter Tabs */
         .filter-tabs {
             display: flex;
             justify-content: center;
@@ -137,6 +131,8 @@
             border-radius: 25px;
             font-weight: 500;
             transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
         }
 
         .filter-tab:hover,
@@ -145,7 +141,6 @@
             color: #ffffff;
         }
 
-        /* Report Cards */
         .reports-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
@@ -255,51 +250,12 @@
             color: #374151;
         }
 
-        /* Archive Section */
-        .archive-section {
-            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
-            padding: 4rem 0;
-            margin-top: 4rem;
-        }
-
-        .archive-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .archive-item {
-            background: #ffffff;
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 3px 15px rgba(107, 114, 128, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .archive-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 25px rgba(107, 114, 128, 0.15);
-        }
-
-        .archive-date {
-            color: #9ca3af;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .archive-title {
-            color: #374151;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .archive-summary {
+        .loading {
+            text-align: center;
+            padding: 4rem;
             color: #6b7280;
-            font-size: 0.9rem;
-            line-height: 1.5;
         }
 
-        /* Footer */
         footer {
             background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
             color: #d1d5db;
@@ -337,14 +293,11 @@
             padding-top: 2rem;
         }
 
-        /* Responsive Design */
         @media (max-width: 768px) {
-            /* Hide Home button on mobile */
             .nav-links li:first-child {
                 display: none;
             }
 
-            /* Compact header on mobile */
             .logo-header {
                 padding: 0.5rem 0;
             }
@@ -380,58 +333,15 @@
                 gap: 1rem;
             }
         }
-
-        /* Financial Terms Tooltip */
-        .financial-term {
-            position: relative;
-            border-bottom: 2px dotted #9ca3af;
-            cursor: help;
-            color: #6b7280;
-        }
-
-        .tooltip {
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #374151;
-            color: #f3f4f6;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            white-space: nowrap;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            z-index: 1000;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .financial-term:hover .tooltip {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .tooltip::after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border: 5px solid transparent;
-            border-top-color: #374151;
-        }
     </style>
 </head>
 <body>
     <!-- Header -->
     <header id="header">
-        <!-- Logo Header Row -->
         <div class="logo-header">
             <a href="index.html" class="logo">Lorthelas <span>Research</span></a>
         </div>
         
-        <!-- Navigation Row -->
         <div class="nav-header">
             <nav>
                 <ul class="nav-links">
@@ -455,131 +365,22 @@
 
             <!-- Filter Tabs -->
             <div class="filter-tabs">
-                <a href="#" class="filter-tab active">All Reports</a>
-                <a href="#" class="filter-tab">Macroeconomic</a>
-                <a href="#" class="filter-tab">Political Economy</a>
-                <a href="#" class="filter-tab">Portfolio Strategy</a>
-                <a href="#" class="filter-tab">Market Analysis</a>
+                <button class="filter-tab active" data-category="all">All Reports</button>
+                <button class="filter-tab" data-category="Macroeconomic">Macroeconomic</button>
+                <button class="filter-tab" data-category="Political Economy">Political Economy</button>
+                <button class="filter-tab" data-category="Portfolio Strategy">Portfolio Strategy</button>
+                <button class="filter-tab" data-category="Market Analysis">Market Analysis</button>
+                <button class="filter-tab" data-category="Geopolitical">Geopolitical</button>
             </div>
 
-            <!-- Latest Reports -->
-            <div class="reports-grid">
-                <div class="report-card">
-                    <div class="report-meta">
-                        <span>January 15, 2025</span>
-                        <span class="report-category">Macroeconomic</span>
-                    </div>
-                    <h3 class="report-title">Q4 2024 Central Bank Policy Review: Fed & ECB Divergence</h3>
-                    <p class="report-summary">Comprehensive analysis of the Federal Reserve's hawkish stance versus the European Central Bank's dovish approach, examining implications for <span class="financial-term">yield curves<span class="tooltip">Graph showing interest rates across different maturities</span></span> and cross-border capital flows. Key findings include potential impacts on EUR/USD parity and sector rotation patterns across major equity indices.</p>
-                    <div class="report-actions">
-                        <a href="#" class="read-more">Read Report</a>
-                        <a href="#" class="download-pdf">📄 Download PDF</a>
-                    </div>
-                </div>
-
-                <div class="report-card">
-                    <div class="report-meta">
-                        <span>January 10, 2025</span>
-                        <span class="report-category">Geopolitical</span>
-                    </div>
-                    <h3 class="report-title">Energy Markets and European Security: Supply Chain Resilience Analysis</h3>
-                    <p class="report-summary">In-depth examination of European energy independence initiatives and their cascading effects on commodity prices, renewable energy investments, and traditional energy sector valuations. Features <span class="financial-term">volatility<span class="tooltip">Measure of price fluctuations in financial markets</span></span> forecasts for natural gas and oil futures through 2025.</p>
-                    <div class="report-actions">
-                        <a href="#" class="read-more">Read Report</a>
-                        <a href="#" class="download-pdf">📄 Download PDF</a>
-                    </div>
-                </div>
-
-                <div class="report-card">
-                    <div class="report-meta">
-                        <span>January 5, 2025</span>
-                        <span class="report-category">Portfolio Strategy</span>
-                    </div>
-                    <h3 class="report-title">2025 Asset Allocation Framework: Multi-Asset Strategic Positioning</h3>
-                    <p class="report-summary">Strategic portfolio positioning framework for the new year, incorporating inflation hedging mechanisms, growth opportunities, and defensive positioning strategies. Detailed analysis of <span class="financial-term">correlation matrices<span class="tooltip">Statistical measure of how different assets move together</span></span> and optimal allocation across traditional and alternative investments.</p>
-                    <div class="report-actions">
-                        <a href="#" class="read-more">Read Report</a>
-                        <a href="#" class="download-pdf">📄 Download PDF</a>
-                    </div>
-                </div>
-
-                <div class="report-card">
-                    <div class="report-meta">
-                        <span>December 28, 2024</span>
-                        <span class="report-category">Market Analysis</span>
-                    </div>
-                    <h3 class="report-title">Cryptocurrency Market Structure: Institutional Adoption Trends</h3>
-                    <p class="report-summary">Analysis of institutional cryptocurrency adoption patterns and their implications for traditional asset allocation models. Examination of regulatory developments, market infrastructure improvements, and correlation dynamics with traditional financial assets.</p>
-                    <div class="report-actions">
-                        <a href="#" class="read-more">Read Report</a>
-                        <a href="#" class="download-pdf">📄 Download PDF</a>
-                    </div>
-                </div>
-
-                <div class="report-card">
-                    <div class="report-meta">
-                        <span>December 20, 2024</span>
-                        <span class="report-category">Macroeconomic</span>
-                    </div>
-                    <h3 class="report-title">Global Inflation Dynamics: Regional Divergence and Policy Implications</h3>
-                    <p class="report-summary">Comparative analysis of inflation trends across major economies, examining structural drivers, policy responses, and implications for currency markets. Special focus on emerging market dynamics and their integration with global financial flows.</p>
-                    <div class="report-actions">
-                        <a href="#" class="read-more">Read Report</a>
-                        <a href="#" class="download-pdf">📄 Download PDF</a>
-                    </div>
-                </div>
-
-                <div class="report-card">
-                    <div class="report-meta">
-                        <span>December 15, 2024</span>
-                        <span class="report-category">Political Economy</span>
-                    </div>
-                    <h3 class="report-title">Trade Policy Evolution: Impact on Global Supply Chains</h3>
-                    <p class="report-summary">Assessment of evolving trade relationships and their impact on global supply chain configurations. Analysis of nearshoring trends, tariff implications, and sector-specific vulnerabilities in the context of changing geopolitical dynamics.</p>
-                    <div class="report-actions">
-                        <a href="#" class="read-more">Read Report</a>
-                        <a href="#" class="download-pdf">📄 Download PDF</a>
-                    </div>
-                </div>
+            <!-- Loading Message -->
+            <div id="loading" class="loading">
+                <p>Loading reports...</p>
             </div>
-        </div>
 
-        <!-- Archive Section -->
-        <div class="archive-section">
-            <div class="container">
-                <h2 style="text-align: center; margin-bottom: 3rem; color: #374151; font-size: 2.5rem;">Report Archive</h2>
-                <div class="archive-grid">
-                    <div class="archive-item">
-                        <div class="archive-date">November 2024</div>
-                        <div class="archive-title">Monthly Market Review</div>
-                        <div class="archive-summary">Comprehensive market analysis and outlook</div>
-                    </div>
-                    <div class="archive-item">
-                        <div class="archive-date">October 2024</div>
-                        <div class="archive-title">Q3 Economic Assessment</div>
-                        <div class="archive-summary">Quarterly economic indicators and trends</div>
-                    </div>
-                    <div class="archive-item">
-                        <div class="archive-date">September 2024</div>
-                        <div class="archive-title">Central Bank Policy Update</div>
-                        <div class="archive-summary">Analysis of global monetary policy shifts</div>
-                    </div>
-                    <div class="archive-item">
-                        <div class="archive-date">August 2024</div>
-                        <div class="archive-title">Commodity Markets Deep Dive</div>
-                        <div class="archive-summary">Comprehensive commodity sector analysis</div>
-                    </div>
-                    <div class="archive-item">
-                        <div class="archive-date">July 2024</div>
-                        <div class="archive-title">ESG Investment Trends</div>
-                        <div class="archive-summary">Sustainable investing market developments</div>
-                    </div>
-                    <div class="archive-item">
-                        <div class="archive-date">June 2024</div>
-                        <div class="archive-title">H1 2024 Market Review</div>
-                        <div class="archive-summary">Mid-year comprehensive market assessment</div>
-                    </div>
-                </div>
+            <!-- Reports Grid - Will be populated by JavaScript -->
+            <div class="reports-grid" id="reports-grid">
+                <!-- Dynamic content will go here -->
             </div>
         </div>
     </div>
@@ -600,39 +401,134 @@
         </div>
     </footer>
 
+    <!-- Add Netlify Identity Widget -->
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <script>
-        // Filter functionality
-        document.querySelectorAll('.filter-tab').forEach(tab => {
-            tab.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                // Remove active class from all tabs
-                document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-                
-                // Add active class to clicked tab
-                this.classList.add('active');
-                
-                // Here you would implement filtering logic
-                console.log('Filter:', this.textContent);
+        if (window.netlifyIdentity) {
+            window.netlifyIdentity.on("init", user => {
+                if (!user) {
+                    window.netlifyIdentity.on("login", () => {
+                        document.location.href = "/admin/";
+                    });
+                }
             });
-        });
-
-        // Initialize tooltips
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Reports page loaded successfully!');
-        });
+        }
     </script>
-<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-<script>
-  if (window.netlifyIdentity) {
-    window.netlifyIdentity.on("init", user => {
-      if (!user) {
-        window.netlifyIdentity.on("login", () => {
-          document.location.href = "/admin/";
-        });
-      }
-    });
-  }
-</script>
+
+    <script>
+        // Function to load reports from GitHub API
+        async function loadReports() {
+            try {
+                const response = await fetch('https://api.github.com/repos/AndreiDumitrache15/lorthelas-research-website/contents/content/reports');
+                const files = await response.json();
+                
+                const reports = [];
+                
+                for (const file of files) {
+                    if (file.name.endsWith('.md')) {
+                        const contentResponse = await fetch(file.download_url);
+                        const content = await contentResponse.text();
+                        
+                        // Parse frontmatter
+                        const parts = content.split('---');
+                        if (parts.length >= 3) {
+                            const frontmatter = parts[1];
+                            const body = parts.slice(2).join('---').trim();
+                            
+                            const report = {};
+                            frontmatter.split('\n').forEach(line => {
+                                const [key, ...value] = line.split(':');
+                                if (key && value.length) {
+                                    let val = value.join(':').trim();
+                                    // Remove quotes
+                                    val = val.replace(/^["']|["']$/g, '');
+                                    report[key.trim()] = val;
+                                }
+                            });
+                            
+                            report.body = body;
+                            report.filename = file.name;
+                            reports.push(report);
+                        }
+                    }
+                }
+                
+                // Sort by date (newest first)
+                reports.sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                displayReports(reports);
+                setupFiltering(reports);
+                
+            } catch (error) {
+                console.error('Error loading reports:', error);
+                document.getElementById('loading').innerHTML = '<p>Error loading reports. Please try again later.</p>';
+            }
+        }
+
+        // Function to display reports
+        function displayReports(reports, filter = 'all') {
+            const grid = document.getElementById('reports-grid');
+            const loading = document.getElementById('loading');
+            
+            loading.style.display = 'none';
+            
+            const filteredReports = filter === 'all' 
+                ? reports 
+                : reports.filter(report => report.category === filter);
+            
+            if (filteredReports.length === 0) {
+                grid.innerHTML = '<p style="text-align: center; color: #6b7280; grid-column: 1/-1;">No reports found for this category.</p>';
+                return;
+            }
+            
+            grid.innerHTML = filteredReports.map(report => {
+                const date = new Date(report.date).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                
+                return `
+                    <div class="report-card">
+                        <div class="report-meta">
+                            <span>${date}</span>
+                            <span class="report-category">${report.category || 'Uncategorized'}</span>
+                        </div>
+                        <h3 class="report-title">${report.title || 'Untitled Report'}</h3>
+                        <p class="report-summary">${report.summary || 'No summary available.'}</p>
+                        <div class="report-actions">
+                            <a href="#" class="read-more" onclick="showReportContent('${report.filename}')">Read Report</a>
+                            ${report.pdf ? `<a href="${report.pdf}" class="download-pdf">📄 Download PDF</a>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Function to setup filtering
+        function setupFiltering(reports) {
+            const tabs = document.querySelectorAll('.filter-tab');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Update active tab
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    // Filter reports
+                    const category = tab.dataset.category;
+                    displayReports(reports, category);
+                });
+            });
+        }
+
+        // Function to show full report content (placeholder)
+        function showReportContent(filename) {
+            alert(`This would show the full content of: ${filename}\n\nIn a real implementation, this would open the full report page.`);
+        }
+
+        // Load reports when page loads
+        document.addEventListener('DOMContentLoaded', loadReports);
+    </script>
 </body>
 </html>
