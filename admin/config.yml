@@ -7,11 +7,25 @@ public_folder: "/images"
 
 collections:
   - name: "reports"
-    label: "Reports"
+    label: "Research Reports"
     folder: "content/reports"
     create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     fields:
       - {label: "Title", name: "title", widget: "string"}
       - {label: "Date", name: "date", widget: "datetime"}
+      - {label: "Category", name: "category", widget: "select", options: ["Macroeconomic", "Political Economy", "Portfolio Strategy", "Market Analysis"]}
       - {label: "Summary", name: "summary", widget: "text"}
       - {label: "Content", name: "body", widget: "markdown"}
+      - {label: "PDF File", name: "pdf", widget: "file", required: false}
+
+  - name: "settings"
+    label: "Site Settings"
+    files:
+      - name: "general"
+        label: "General Settings"
+        file: "content/settings.md"
+        fields:
+          - {label: "Company Name", name: "company_name", widget: "string"}
+          - {label: "Contact Email", name: "email", widget: "string"}
+          - {label: "Phone", name: "phone", widget: "string"}
