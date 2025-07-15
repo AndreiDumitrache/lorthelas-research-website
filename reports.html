@@ -419,7 +419,7 @@
         // Function to load reports from GitHub API
         async function loadReports() {
             try {
-                const response = await fetch('https://api.github.com/repos/AndreiDumitrache15/lorthelas-research-website/contents/content/reports');
+                const response = await fetch('https://api.github.com/repos/AndreiDumitrache/lorthelas-research-website/contents/content/reports');
                 const files = await response.json();
                 
                 const reports = [];
