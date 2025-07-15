@@ -690,6 +690,32 @@
 
         // Load reports when page loads
         document.addEventListener('DOMContentLoaded', loadReports);
+        function searchReports() {
+    const searchInput = document.getElementById('search-input');
+    const searchTerm = searchInput.value.toLowerCase().trim();
+    const reportCards = document.querySelectorAll('.report-card');
+    
+    if (searchTerm === '') {
+        // Show all reports
+        reportCards.forEach(card => {
+            card.style.display = 'block';
+        });
+        return;
+    }
+    
+    // Filter reports
+    reportCards.forEach(card => {
+        const title = card.querySelector('.report-title').textContent.toLowerCase();
+        const summary = card.querySelector('.report-summary').textContent.toLowerCase();
+        const category = card.querySelector('.report-category').textContent.toLowerCase();
+        
+        if (title.includes(searchTerm) || summary.includes(searchTerm) || category.includes(searchTerm)) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
     </script>
 </body>
 </html>
