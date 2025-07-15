@@ -716,6 +716,22 @@
         }
     });
 }
+        function toggleShareMenu(event, filename, title) {
+    alert('Share menu for: ' + title);
+    // We'll add the real menu later
+}
+
+function shareViaEmail(title, filename) {
+    const url = window.location.origin + '/report.html?report=' + filename;
+    const subject = 'Research Report: ' + title;
+    const body = 'Check out this research report: ' + title + '\n\n' + url;
+    window.open('mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body));
+}
+
+function copyReportLink(filename) {
+    const url = window.location.origin + '/report.html?report=' + filename;
+    prompt('Copy this link:', url);
+}
     </script>
 </body>
 </html>
