@@ -717,20 +717,81 @@
     });
 }
         function toggleShareMenu(event, filename, title) {
-    alert('Share menu for: ' + title);
-    // We'll add the real menu later
+    // Create or show share menu
+    let existingMenu = document.getElementById('temp-share-menu');
+    
+    // Remove any existing menu
+    if (existingMenu) {
+        existingMenu.remove();
+    }
+    
+    // Create new share menu
+    const menu = document.createElement('div');
+    menu.id = 'temp-share-menu';
+    menu.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 1rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        z-index: 1000;
+    `;
+    
+    menu.innerHTML = `
+        <div style="margin-bottom: 1rem; font-weight: bold;">Share: ${title}</div>
+        <button onclick="shareViaEmail('${title}', '${filename}')" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.5rem;">📧 Email</button>
+        <button onclick="shareViaLinkedIn('${title}', '${filename}')" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.5rem;">💼 LinkedIn</button>
+        <button onclick="shareViaTwitter('${title}', '${filename}')" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.5rem;">🐦 Twitter</button>
+        <button onclick="copyReportLink('${filename}')" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.5rem;">🔗 Copy Link</button>
+        <button onclick="closeShareMenu()" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.5rem; background: #f0f0f0;">❌ Close</button>
+    `;
+    
+    document.body.appendChild(menu);
+    
+    event.stopPropagation();
+}
+
+function closeShareMenu() {
+    const menu = document.getElementById('temp-share-menu');
+    if (menu) menu.remove();
 }
 
 function shareViaEmail(title, filename) {
-    const url = window.location.origin + '/report.html?report=' + filename;
-    const subject = 'Research Report: ' + title;
-    const body = 'Check out this research report: ' + title + '\n\n' + url;
-    window.open('mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body));
+    const url = `${window.location.origin}/report.html?report=${filename}`;
+    const subject = encodeURIComponent(`Research Report: ${title}`);
+    const body = encodeURIComponent(`Check out this research report:\n\n${title}\n\n${url}`);
+    window.open(`mailto:?subject=${subject}&body=${body}`);
+    closeShareMenu();
+}
+
+function shareViaLinkedIn(title, filename) {
+    const url = `${window.location.origin}/report.html?report=${filename}`;
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
+    closeShareMenu();
+}
+
+function shareViaTwitter(title, filename) {
+    const url = `${window.location.origin}/report.html?report=${filename}`;
+    const text = encodeURIComponent(`Check out: ${title} ${url} #Research`);
+    window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
+    closeShareMenu();
 }
 
 function copyReportLink(filename) {
-    const url = window.location.origin + '/report.html?report=' + filename;
-    prompt('Copy this link:', url);
+    const url = `${window.location.origin}/report.html?report=${filename}`;
+    
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(url).then(() => {
+            alert('✅ Link copied to clipboard!');
+        });
+    } else {
+        prompt('Copy this link:', url);
+    }
+    closeShareMenu();
 }
     </script>
 </body>
