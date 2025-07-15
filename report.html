@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report | Lorthelas Research</title>
+    <meta name="description" content="Research report from Lorthelas Research">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+            background: #ffffff;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(51, 65, 85, 0.95);
+            backdrop-filter: blur(15px);
+            z-index: 1000;
+            transition: all 0.4s ease;
+        }
+
+        .logo-header {
+            padding: 0.8rem 0;
+            text-align: center;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: #94a3b8;
+        }
+
+        .nav-header {
+            padding: 1rem 0;
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 3rem;
+            margin: 0;
+        }
+
+        .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #94a3b8;
+        }
+
+        .page-content {
+            margin-top: 140px;
+            padding: 4rem 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #6b7280;
+            text-decoration: none;
+            margin-bottom: 2rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #374151;
+        }
+
+        .report-header {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .report-meta {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .report-date {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .report-category {
+            background: #e5e7eb;
+            color: #374151;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .report-title {
+            font-size: 2.5rem;
+            color: #374151;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .report-summary {
+            font-size: 1.1rem;
+            color: #6b7280;
+            line-height: 1.7;
+        }
+
+        .report-content {
+            color: #374151;
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+
+        .report-content h1,
+        .report-content h2,
+        .report-content h3 {
+            color: #374151;
+            margin: 2rem 0 1rem 0;
+            font-weight: 600;
+        }
+
+        .report-content h1 {
+            font-size: 2rem;
+        }
+
+        .report-content h2 {
+            font-size: 1.5rem;
+        }
+
+        .report-content h3 {
+            font-size: 1.2rem;
+        }
+
+        .report-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        .report-content ul,
+        .report-content ol {
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+        }
+
+        .report-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .report-content blockquote {
+            border-left: 4px solid #e5e7eb;
+            padding-left: 1.5rem;
+            margin: 2rem 0;
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        .report-content code {
+            background: #f3f4f6;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9rem;
+        }
+
+        .report-content pre {
+            background: #f3f4f6;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        .report-actions {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .action-button {
+            color: #374151;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #374151;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .action-button:hover {
+            background: #374151;
+            color: #ffffff;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 4rem;
+            color: #6b7280;
+        }
+
+        .error {
+            text-align: center;
+            padding: 4rem;
+            color: #dc2626;
+        }
+
+        footer {
+            background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+            color: #d1d5db;
+            padding: 4rem 0 2rem 0;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-nav {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-nav a {
+            color: #d1d5db;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .footer-nav a:hover {
+            color: #94a3b8;
+        }
+
+        .footer-copyright {
+            text-align: center;
+            border-top: 1px solid #4b5563;
+            padding-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links li:first-child {
+                display: none;
+            }
+
+            .logo-header {
+                padding: 0.5rem 0;
+            }
+
+            .logo {
+                font-size: 1.2rem;
+            }
+
+            .nav-header {
+                padding: 0.6rem 0;
+            }
+
+            .nav-links {
+                gap: 1.2rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .nav-links a {
+                font-size: 0.85rem;
+                padding: 0.3rem 0.5rem;
+            }
+
+            .report-title {
+                font-size: 2rem;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header">
+        <div class="logo-header">
+            <a href="index.html" class="logo">Lorthelas <span>Research</span></a>
+        </div>
+        
+        <div class="nav-header">
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="reports.html" class="active">Reports</a></li>
+                    <li><a href="portfolio.html">Portfolio</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Page Content -->
+    <div class="page-content">
+        <div class="container">
+            <a href="reports.html" class="back-link">← Back to Reports</a>
+            
+            <!-- Loading -->
+            <div id="loading" class="loading">
+                <p>Loading report...</p>
+            </div>
+
+            <!-- Error -->
+            <div id="error" class="error" style="display: none;">
+                <p>Error loading report. Please try again later.</p>
+            </div>
+
+            <!-- Report Content -->
+            <div id="report-container" style="display: none;">
+                <div class="report-header">
+                    <div class="report-meta">
+                        <span class="report-date" id="report-date"></span>
+                        <span class="report-category" id="report-category"></span>
+                    </div>
+                    <h1 class="report-title" id="report-title"></h1>
+                    <p class="report-summary" id="report-summary"></p>
+                </div>
+
+                <div class="report-content" id="report-content">
+                    <!-- Report content will be loaded here -->
+                </div>
+
+                <div class="report-actions">
+                    <a href="reports.html" class="action-button">← Back to Reports</a>
+                    <a href="#" class="action-button" id="download-pdf" style="display: none;">📄 Download PDF</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <nav class="footer-nav">
+                <a href="index.html">Home</a>
+                <a href="reports.html">Reports</a>
+                <a href="portfolio.html">Portfolio</a>
+                <a href="contact.html">Contact</a>
+            </nav>
+            <div class="footer-copyright">
+                <p>&copy; 2025 Lorthelas Research. All rights reserved.</p>
+                <p>Independent investment research and analysis</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Add Netlify Identity Widget -->
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <script>
+        if (window.netlifyIdentity) {
+            window.netlifyIdentity.on("init", user => {
+                if (!user) {
+                    window.netlifyIdentity.on("login", () => {
+                        document.location.href = "/admin/";
+                    });
+                }
+            });
+        }
+    </script>
+
+    <script>
+        // Function to get URL parameter
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            const results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        // Function to load a specific report
+        async function loadReport() {
+            const filename = getUrlParameter('report');
+            
+            if (!filename) {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').innerHTML = '<p>No report specified.</p>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`https://api.github.com/repos/AndreiDumitrache/lorthelas-research-website/contents/content/reports/${filename}`);
+                const file = await response.json();
+                
+                const contentResponse = await fetch(file.download_url);
+                const content = await contentResponse.text();
+                
+                // Parse frontmatter and content
+                const parts = content.split('---');
+                if (parts.length >= 3) {
+                    const frontmatter = parts[1];
+                    const body = parts.slice(2).join('---').trim();
+                    
+                    const report = {};
+                    frontmatter.split('\n').forEach(line => {
+                        const [key, ...value] = line.split(':');
+                        if (key && value.length) {
+                            let val = value.join(':').trim();
+                            val = val.replace(/^["']|["']$/g, '');
+                            report[key.trim()] = val;
+                        }
+                    });
+                    
+                    // Update page title
+                    document.title = `${report.title || 'Report'} | Lorthelas Research`;
+                    
+                    // Display report
+                    displayReport(report, body);
+                } else {
+                    throw new Error('Invalid report format');
+                }
+                
+            } catch (error) {
+                console.error('Error loading report:', error);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+            }
+        }
+
+        // Function to display the report
+        function displayReport(report, content) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('report-container').style.display = 'block';
+            
+            // Format date
+            const date = new Date(report.date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            // Update elements
+            document.getElementById('report-date').textContent = date;
+            document.getElementById('report-category').textContent = report.category || 'Uncategorized';
+            document.getElementById('report-title').textContent = report.title || 'Untitled Report';
+            document.getElementById('report-summary').textContent = report.summary || 'No summary available.';
+            
+            // Convert markdown to HTML (basic conversion)
+            const htmlContent = convertMarkdownToHTML(content);
+            document.getElementById('report-content').innerHTML = htmlContent;
+            
+            // Show PDF download if available
+            if (report.pdf) {
+                const pdfLink = document.getElementById('download-pdf');
+                pdfLink.href = report.pdf;
+                pdfLink.style.display = 'inline-flex';
+            }
+        }
+
+        // Basic markdown to HTML converter
+        function convertMarkdownToHTML(markdown) {
+            let html = markdown;
+            
+            // Headers
+            html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+            html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+            html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+            
+            // Bold and italic
+            html = html.replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>');
+            html = html.replace(/\*(.*)\*/gim, '<em>$1</em>');
+            
+            // Paragraphs
+            html = html.replace(/\n\n/gim, '</p><p>');
+            html = '<p>' + html + '</p>';
+            
+            // Clean up empty paragraphs
+            html = html.replace(/<p><\/p>/gim, '');
+            
+            return html;
+        }
+
+        // Load report when page loads
+        document.addEventListener('DOMContentLoaded', loadReport);
+    </script>
+</body>
+</html>
