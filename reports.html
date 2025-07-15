@@ -497,7 +497,7 @@
                         <h3 class="report-title">${report.title || 'Untitled Report'}</h3>
                         <p class="report-summary">${report.summary || 'No summary available.'}</p>
                         <div class="report-actions">
-                            <a href="#" class="read-more" onclick="showReportContent('${report.filename}')">Read Report</a>
+                            <a href="report.html?report=${report.filename}" class="read-more">Read Report</a>
                             ${report.pdf ? `<a href="${report.pdf}" class="download-pdf">📄 Download PDF</a>` : ''}
                         </div>
                     </div>
