@@ -648,11 +648,30 @@
                                     // Remove quotes
                                     val = val.replace(/^["']|["']$/g, '');
                                     
-                                    // Handle categories array
+                                    // Enhanced categories parsing
                                     if (key.trim() === 'categories') {
-                                        // Parse YAML array format
-                                        if (val.startsWith('[') && val.endsWith(']')) {
-                                            val = val.slice(1, -1).split(',').map(item => item.trim().replace(/['"]/g, ''));
+                                        try {
+                                            // Handle different YAML formats for arrays
+                                            if (val.startsWith('[') && val.endsWith(']')) {
+                                                // JSON-like array: [item1, item2]
+                                                val = JSON.parse(val.replace(/'/g, '"'));
+                                            } else if (val.includes('-')) {
+                                                // YAML array with dashes (multiline)
+                                                // This case is handled differently in actual YAML parsing
+                                                val = [val]; // Fallback to single item
+                                            } else if (val.includes(',')) {
+                                                // Comma-separated: item1, item2
+                                                val = val.split(',').map(item => item.trim().replace(/['"]/g, ''));
+                                            } else if (val.trim()) {
+                                                // Single item
+                                                val = [val.trim()];
+                                            } else {
+                                                val = [];
+                                            }
+                                        } catch (e) {
+                                            console.log('Error parsing categories for', file.name, ':', val);
+                                            // Fallback: treat as single category
+                                            val = val ? [val] : [];
                                         }
                                     }
                                     
@@ -660,9 +679,24 @@
                                 }
                             });
                             
+                            // Handle YAML list format for categories (multiline with dashes)
+                            if (!report.categories || report.categories.length === 0) {
+                                const categoryMatch = frontmatter.match(/categories:\s*\n((?:\s*-\s*.+\n?)*)/);
+                                if (categoryMatch) {
+                                    const categoryLines = categoryMatch[1];
+                                    report.categories = categoryLines
+                                        .split('\n')
+                                        .filter(line => line.trim().startsWith('-'))
+                                        .map(line => line.replace(/^\s*-\s*/, '').trim().replace(/['"]/g, ''))
+                                        .filter(cat => cat.length > 0);
+                                }
+                            }
+                            
                             report.body = body;
                             report.filename = file.name;
                             allReports.push(report);
+                            
+                            console.log('Loaded report:', report.title, 'Categories:', report.categories);
                         }
                     }
                 }
@@ -673,6 +707,8 @@
                 filteredReports = [...allReports];
                 displayReports(filteredReports);
                 setupFiltering();
+                
+                console.log('Total reports loaded:', allReports.length);
                 
             } catch (error) {
                 console.error('Error loading reports:', error);
@@ -712,10 +748,15 @@
                     day: 'numeric'
                 });
                 
-                // Handle multiple categories
-                const categories = report.categories && Array.isArray(report.categories) 
-                    ? report.categories 
-                    : (report.category ? [report.category] : ['Uncategorized']);
+                // Enhanced category handling
+                let categories = [];
+                if (report.categories && Array.isArray(report.categories) && report.categories.length > 0) {
+                    categories = report.categories;
+                } else if (report.category) {
+                    categories = [report.category];
+                } else {
+                    categories = ['Uncategorized'];
+                }
 
                 const categoriesHtml = categories.map(cat => 
                     `<span class="report-category">${cat}</span>`
