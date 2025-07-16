@@ -753,6 +753,13 @@ async function loadPortfolioData() {
         if (beta) updateMetricByLabel('Beta', beta);
         if (alpha) updateMetricByLabel('Alpha', alpha);
         
+        // Extract and update allocation data
+        const allocationData = extractAllocationData(content);
+        if (allocationData.length > 0) {
+            updateAllocationLegend(allocationData);
+            console.log('Updated allocation legend with', allocationData.length, 'items');
+        }
+        
         console.log('Portfolio metrics updated successfully!');
         
     } catch (error) {
@@ -797,6 +804,72 @@ function updateMetricByLabel(labelText, newValue) {
         }
     });
 }
+// Add allocation legend update function
+function updateAllocationLegend(allocation) {
+    const legend = document.querySelector('.allocation-legend');
+    if (!legend) {
+        console.log('Allocation legend element not found');
+        return;
+    }
+    
+    console.log('Updating allocation legend with:', allocation);
+    
+    legend.innerHTML = allocation.map(item => `
+        <div class="legend-item">
+            <div class="legend-color" style="background: ${item.color};"></div>
+            <span class="legend-label">${item.asset}</span>
+            <span class="legend-percentage">${item.percentage}%</span>
+        </div>
+    `).join('');
+    
+    console.log('Allocation legend updated successfully');
+}
+
+// Add allocation data extraction function
+function extractAllocationData(content) {
+    const allocationData = [];
+    const lines = content.split('\n');
+    let inAllocationSection = false;
+    let currentItem = {};
+    
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        
+        if (line === 'allocation:') {
+            inAllocationSection = true;
+            continue;
+        }
+        
+        if (inAllocationSection) {
+            // Check if we've moved to a new section
+            if (line && !line.startsWith(' ') && !line.startsWith('-') && line.includes(':')) {
+                break; // End of allocation section
+            }
+            
+            if (line.startsWith('- asset:')) {
+                // Save previous item if exists
+                if (currentItem.asset) {
+                    allocationData.push(currentItem);
+                }
+                // Start new item
+                currentItem = {};
+                currentItem.asset = line.split('asset:')[1].trim().replace(/"/g, '');
+            } else if (line.includes('percentage:')) {
+                currentItem.percentage = line.split('percentage:')[1].trim();
+            } else if (line.includes('color:')) {
+                currentItem.color = line.split('color:')[1].trim().replace(/"/g, '');
+            }
+        }
+    }
+    
+    // Add the last item
+    if (currentItem.asset) {
+        allocationData.push(currentItem);
+    }
+    
+    console.log('Extracted allocation data:', allocationData);
+    return allocationData;
+}        
 </script>
 </body>
 </html>
