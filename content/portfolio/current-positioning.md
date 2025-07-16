@@ -17,7 +17,7 @@ allocation:
     percentage: 10
     color: "#d1d5db"
   - asset: Cash
-    percentage: 60
+    percentage: 50
     color: "#f3f4f6"
 metrics:
   annual_return: 10%
