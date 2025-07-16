@@ -185,35 +185,21 @@
 
         .report-meta {
             display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
+            justify-content: space-between;
             align-items: center;
-        }
-
-        .report-date {
+            margin-bottom: 1rem;
             color: #9ca3af;
             font-size: 0.9rem;
             font-weight: 500;
         }
 
         .report-category {
-            background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
-            color: #ffffff;
+            background: #e5e7eb;
+            color: #374151;
             padding: 0.25rem 0.75rem;
             border-radius: 12px;
             font-size: 0.8rem;
             font-weight: 600;
-            white-space: nowrap;
-        }
-
-        /* Different colors for different categories */
-        .report-category:nth-child(odd) {
-            background: linear-gradient(135deg, #6b7280 0%, #374151 100%);
-        }
-
-        .report-category:nth-child(even) {
-            background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
         }
 
         .report-title {
@@ -616,18 +602,13 @@
     </script>
 
     <script>
-        // Global variables
-        let allReports = [];
-        let filteredReports = [];
-        let currentFilter = 'all';
-
         // Function to load reports from GitHub API
         async function loadReports() {
             try {
                 const response = await fetch('https://api.github.com/repos/AndreiDumitrache/lorthelas-research-website/contents/content/reports');
                 const files = await response.json();
                 
-                allReports = [];
+                const reports = [];
                 
                 for (const file of files) {
                     if (file.name.endsWith('.md')) {
@@ -647,70 +628,22 @@
                                     let val = value.join(':').trim();
                                     // Remove quotes
                                     val = val.replace(/^["']|["']$/g, '');
-                                    
-                                    // Enhanced categories parsing
-                                    // Handle categories array - FIXED VERSION
-if (key.trim() === 'categories') {
-    console.log('Raw categories value:', val);
-    
-    try {
-        // Skip if empty string or just whitespace
-        if (!val || val.trim() === '') {
-            val = [];
-        } else if (val.startsWith('[') && val.endsWith(']')) {
-            // JSON array format
-            val = JSON.parse(val.replace(/'/g, '"'));
-        } else if (val.includes(',')) {
-            // Comma separated
-            val = val.split(',').map(item => item.trim().replace(/['"]/g, ''));
-        } else if (val.trim()) {
-            // Single category
-            val = [val.trim()];
-        } else {
-            val = [];
-        }
-        
-        console.log('Parsed categories result:', val);
-    } catch (e) {
-        console.log('Categories parsing error:', e);
-        val = [];
-    }
-}
-                                    
                                     report[key.trim()] = val;
                                 }
                             });
                             
-                            // Handle YAML list format for categories (multiline with dashes)
-                            if (!report.categories || report.categories.length === 0) {
-                                const categoryMatch = frontmatter.match(/categories:\s*\n((?:\s*-\s*.+\n?)*)/);
-                                if (categoryMatch) {
-                                    const categoryLines = categoryMatch[1];
-                                    report.categories = categoryLines
-                                        .split('\n')
-                                        .filter(line => line.trim().startsWith('-'))
-                                        .map(line => line.replace(/^\s*-\s*/, '').trim().replace(/['"]/g, ''))
-                                        .filter(cat => cat.length > 0);
-                                }
-                            }
-                            
                             report.body = body;
                             report.filename = file.name;
-                            allReports.push(report);
-                            
-                            console.log('Loaded report:', report.title, 'Categories:', report.categories);
+                            reports.push(report);
                         }
                     }
                 }
                 
                 // Sort by date (newest first)
-                allReports.sort((a, b) => new Date(b.date) - new Date(a.date));
+                reports.sort((a, b) => new Date(b.date) - new Date(a.date));
                 
-                filteredReports = [...allReports];
-                displayReports(filteredReports);
-                setupFiltering();
-                
-                console.log('Total reports loaded:', allReports.length);
+                displayReports(reports);
+                setupFiltering(reports);
                 
             } catch (error) {
                 console.error('Error loading reports:', error);
@@ -719,69 +652,36 @@ if (key.trim() === 'categories') {
         }
 
         // Function to display reports
-        function displayReports(reports, searchTerm = '') {
+        function displayReports(reports, filter = 'all') {
             const grid = document.getElementById('reports-grid');
             const loading = document.getElementById('loading');
-            const searchStats = document.getElementById('search-stats');
             
             loading.style.display = 'none';
             
-            if (reports.length === 0) {
-                grid.innerHTML = '<div class="no-results">No reports found matching your criteria.</div>';
-                searchStats.style.display = 'none';
+            const filteredReports = filter === 'all' 
+                ? reports 
+                : reports.filter(report => report.category === filter);
+            
+            if (filteredReports.length === 0) {
+                grid.innerHTML = '<p style="text-align: center; color: #6b7280; grid-column: 1/-1;">No reports found for this category.</p>';
                 return;
             }
-
-            // Show search stats
-            if (searchTerm) {
-                searchStats.innerHTML = `Found ${reports.length} report${reports.length === 1 ? '' : 's'} matching "${searchTerm}"`;
-                searchStats.style.display = 'block';
-            } else if (currentFilter !== 'all') {
-                searchStats.innerHTML = `Showing ${reports.length} ${currentFilter} report${reports.length === 1 ? '' : 's'}`;
-                searchStats.style.display = 'block';
-            } else {
-                searchStats.style.display = 'none';
-            }
             
-            grid.innerHTML = reports.map(report => {
+            grid.innerHTML = filteredReports.map(report => {
                 const date = new Date(report.date).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric'
                 });
                 
-                // Enhanced category handling
-                let categories = [];
-                if (report.categories && Array.isArray(report.categories) && report.categories.length > 0) {
-                    categories = report.categories;
-                } else if (report.category) {
-                    categories = [report.category];
-                } else {
-                    categories = ['Uncategorized'];
-                }
-
-                const categoriesHtml = categories.map(cat => 
-                    `<span class="report-category">${cat}</span>`
-                ).join('');
-                
-                // Highlight search terms
-                let title = report.title || 'Untitled Report';
-                let summary = report.summary || 'No summary available.';
-                
-                if (searchTerm) {
-                    const regex = new RegExp(`(${searchTerm})`, 'gi');
-                    title = title.replace(regex, '<span class="search-highlight">$1</span>');
-                    summary = summary.replace(regex, '<span class="search-highlight">$1</span>');
-                }
-                
                 return `
                     <div class="report-card">
                         <div class="report-meta">
-                            <span class="report-date">${date}</span>
-                            ${categoriesHtml}
+                            <span>${date}</span>
+                            <span class="report-category">${report.category || 'Uncategorized'}</span>
                         </div>
-                        <h3 class="report-title">${title}</h3>
-                        <p class="report-summary">${summary}</p>
+                        <h3 class="report-title">${report.title || 'Untitled Report'}</h3>
+                        <p class="report-summary">${report.summary || 'No summary available.'}</p>
                         <div class="report-actions">
                             <a href="report.html?report=${report.filename}" class="read-more">Read Report</a>
                             ${report.pdf ? `<a href="${report.pdf}" class="download-pdf">📄 Download PDF</a>` : ''}
@@ -810,67 +710,8 @@ if (key.trim() === 'categories') {
             }).join('');
         }
 
-        // Search functionality
-        function searchReports() {
-            const searchTerm = document.getElementById('search-input').value.trim();
-            performSearch(searchTerm);
-        }
-
-        function performSearch(searchTerm) {
-            if (!searchTerm) {
-                filteredReports = allReports.filter(report => 
-                    currentFilter === 'all' || matchesCategory(report, currentFilter)
-                );
-                displayReports(filteredReports);
-                return;
-            }
-
-            const searchLower = searchTerm.toLowerCase();
-            filteredReports = allReports.filter(report => {
-                const matchesFilter = currentFilter === 'all' || matchesCategory(report, currentFilter);
-                const matchesSearch = 
-                    (report.title && report.title.toLowerCase().includes(searchLower)) ||
-                    (report.summary && report.summary.toLowerCase().includes(searchLower)) ||
-                    (report.categories && report.categories.some(cat => cat.toLowerCase().includes(searchLower))) ||
-                    (report.category && report.category.toLowerCase().includes(searchLower)) ||
-                    (report.body && report.body.toLowerCase().includes(searchLower));
-                
-                return matchesFilter && matchesSearch;
-            });
-
-            displayReports(filteredReports, searchTerm);
-        }
-
-        // Helper function to check if report matches category (supports multiple categories)
-        function matchesCategory(report, category) {
-            if (report.categories && Array.isArray(report.categories)) {
-                return report.categories.includes(category);
-            }
-            return report.category === category;
-        }
-
-        // Search on Enter key
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('search-input');
-            if (searchInput) {
-                searchInput.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        searchReports();
-                    }
-                });
-
-                // Real-time search as user types
-                searchInput.addEventListener('input', function() {
-                    const searchTerm = this.value.trim();
-                    if (searchTerm.length >= 2 || searchTerm.length === 0) {
-                        performSearch(searchTerm);
-                    }
-                });
-            }
-        });
-
         // Function to setup filtering
-        function setupFiltering() {
+        function setupFiltering(reports) {
             const tabs = document.querySelectorAll('.filter-tab');
             
             tabs.forEach(tab => {
@@ -880,99 +721,122 @@ if (key.trim() === 'categories') {
                     tab.classList.add('active');
                     
                     // Filter reports
-                    currentFilter = tab.dataset.category;
-                    const searchTerm = document.getElementById('search-input').value.trim();
-                    performSearch(searchTerm);
+                    const category = tab.dataset.category;
+                    displayReports(reports, category);
                 });
             });
         }
 
-        // Share functionality
-        function toggleShareMenu(event, filename, title) {
-            // Remove any existing menu
-            let existingMenu = document.getElementById('temp-share-menu');
-            if (existingMenu) {
-                existingMenu.remove();
-                return; // If menu exists, just close it
-            }
-            
-            // Create new share menu popup
-            const menu = document.createElement('div');
-            menu.id = 'temp-share-menu';
-            menu.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background: white;
-                border: 2px solid #374151;
-                border-radius: 12px;
-                padding: 1.5rem;
-                box-shadow: 0 8px 30px rgba(0,0,0,0.4);
-                z-index: 1000;
-                min-width: 280px;
-            `;
-            
-            menu.innerHTML = `
-                <div style="margin-bottom: 1rem; font-weight: bold; font-size: 1.1rem; color: #374151;">Share Report</div>
-                <div style="margin-bottom: 1rem; color: #6b7280; font-size: 0.9rem;">${title}</div>
-                <button onclick="shareViaEmail('${title.replace(/'/g, "\\'")}', '${filename}')" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer; transition: background 0.2s;">📧 Share via Email</button>
-                <button onclick="shareViaLinkedIn('${title.replace(/'/g, "\\'")}', '${filename}')" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer; transition: background 0.2s;">💼 Share on LinkedIn</button>
-                <button onclick="shareViaTwitter('${title.replace(/'/g, "\\'")}', '${filename}')" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer; transition: background 0.2s;">🐦 Share on Twitter</button>
-                <button onclick="copyReportLink('${filename}')" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer; transition: background 0.2s;">🔗 Copy Link</button>
-                <button onclick="closeShareMenu()" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: #f8fafc; cursor: pointer;">❌ Close</button>
-            `;
-            
-            document.body.appendChild(menu);
-            event.stopPropagation();
+        // Function to show full report content (placeholder)
+        function showReportContent(filename) {
+            alert(`This would show the full content of: ${filename}\n\nIn a real implementation, this would open the full report page.`);
         }
-
-        function closeShareMenu() {
-            const menu = document.getElementById('temp-share-menu');
-            if (menu) menu.remove();
-        }
-
-        function shareViaEmail(title, filename) {
-            const url = `${window.location.origin}/report.html?report=${filename}`;
-            const subject = encodeURIComponent(`Research Report: ${title}`);
-            const body = encodeURIComponent(`Check out this research report:\n\n${title}\n\n${url}`);
-            window.open(`mailto:?subject=${subject}&body=${body}`);
-            closeShareMenu();
-        }
-
-        function shareViaLinkedIn(title, filename) {
-            const url = `${window.location.origin}/report.html?report=${filename}`;
-            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
-            closeShareMenu();
-        }
-
-        function shareViaTwitter(title, filename) {
-            const url = `${window.location.origin}/report.html?report=${filename}`;
-            const text = encodeURIComponent(`Check out: ${title} ${url} #Research`);
-            window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
-            closeShareMenu();
-        }
-
-        function copyReportLink(filename) {
-            const url = `${window.location.origin}/report.html?report=${filename}`;
-            
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(url).then(() => {
-                    alert('✅ Link copied to clipboard!');
-                });
-            } else {
-                prompt('Copy this link:', url);
-            }
-            closeShareMenu();
-        }
-
-        // Close share menus when clicking outside
-        document.addEventListener('click', function() {
-            closeShareMenu();
-        });
 
         // Load reports when page loads
         document.addEventListener('DOMContentLoaded', loadReports);
+        function searchReports() {
+    const searchInput = document.getElementById('search-input');
+    const searchTerm = searchInput.value.toLowerCase().trim();
+    const reportCards = document.querySelectorAll('.report-card');
+    
+    if (searchTerm === '') {
+        // Show all reports
+        reportCards.forEach(card => {
+            card.style.display = 'block';
+        });
+        return;
+    }
+    
+    // Filter reports
+    reportCards.forEach(card => {
+        const title = card.querySelector('.report-title').textContent.toLowerCase();
+        const summary = card.querySelector('.report-summary').textContent.toLowerCase();
+        const category = card.querySelector('.report-category').textContent.toLowerCase();
+        
+        if (title.includes(searchTerm) || summary.includes(searchTerm) || category.includes(searchTerm)) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+        function toggleShareMenu(event, filename, title) {
+    // Remove any existing menu
+    let existingMenu = document.getElementById('temp-share-menu');
+    if (existingMenu) {
+        existingMenu.remove();
+        return; // If menu exists, just close it
+    }
+    
+    // Create new share menu popup
+    const menu = document.createElement('div');
+    menu.id = 'temp-share-menu';
+    menu.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        border: 2px solid #374151;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+        z-index: 1000;
+        min-width: 280px;
+    `;
+    
+    menu.innerHTML = `
+        <div style="margin-bottom: 1rem; font-weight: bold; font-size: 1.1rem; color: #374151;">Share Report</div>
+        <div style="margin-bottom: 1rem; color: #6b7280; font-size: 0.9rem;">${title}</div>
+        <button onclick="shareViaEmail('${title.replace(/'/g, "\\'")}', '${filename}')" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer; transition: background 0.2s;">📧 Share via Email</button>
+        <button onclick="shareViaLinkedIn('${title.replace(/'/g, "\\'")}', '${filename}')" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer; transition: background 0.2s;">💼 Share on LinkedIn</button>
+        <button onclick="shareViaTwitter('${title.replace(/'/g, "\\'")}', '${filename}')" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer; transition: background 0.2s;">🐦 Share on Twitter</button>
+        <button onclick="copyReportLink('${filename}')" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer; transition: background 0.2s;">🔗 Copy Link</button>
+        <button onclick="closeShareMenu()" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: #f8fafc; cursor: pointer;">❌ Close</button>
+    `;
+    
+    document.body.appendChild(menu);
+    event.stopPropagation();
+}
+
+function closeShareMenu() {
+    const menu = document.getElementById('temp-share-menu');
+    if (menu) menu.remove();
+}
+
+function shareViaEmail(title, filename) {
+    const url = `${window.location.origin}/report.html?report=${filename}`;
+    const subject = encodeURIComponent(`Research Report: ${title}`);
+    const body = encodeURIComponent(`Check out this research report:\n\n${title}\n\n${url}`);
+    window.open(`mailto:?subject=${subject}&body=${body}`);
+    closeShareMenu();
+}
+
+function shareViaLinkedIn(title, filename) {
+    const url = `${window.location.origin}/report.html?report=${filename}`;
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
+    closeShareMenu();
+}
+
+function shareViaTwitter(title, filename) {
+    const url = `${window.location.origin}/report.html?report=${filename}`;
+    const text = encodeURIComponent(`Check out: ${title} ${url} #Research`);
+    window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
+    closeShareMenu();
+}
+
+function copyReportLink(filename) {
+    const url = `${window.location.origin}/report.html?report=${filename}`;
+    
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(url).then(() => {
+            alert('✅ Link copied to clipboard!');
+        });
+    } else {
+        prompt('Copy this link:', url);
+    }
+    closeShareMenu();
+}
     </script>
 </body>
 </html>
