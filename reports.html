@@ -649,31 +649,33 @@
                                     val = val.replace(/^["']|["']$/g, '');
                                     
                                     // Enhanced categories parsing
-                                    if (key.trim() === 'categories') {
-                                        try {
-                                            // Handle different YAML formats for arrays
-                                            if (val.startsWith('[') && val.endsWith(']')) {
-                                                // JSON-like array: [item1, item2]
-                                                val = JSON.parse(val.replace(/'/g, '"'));
-                                            } else if (val.includes('-')) {
-                                                // YAML array with dashes (multiline)
-                                                // This case is handled differently in actual YAML parsing
-                                                val = [val]; // Fallback to single item
-                                            } else if (val.includes(',')) {
-                                                // Comma-separated: item1, item2
-                                                val = val.split(',').map(item => item.trim().replace(/['"]/g, ''));
-                                            } else if (val.trim()) {
-                                                // Single item
-                                                val = [val.trim()];
-                                            } else {
-                                                val = [];
-                                            }
-                                        } catch (e) {
-                                            console.log('Error parsing categories for', file.name, ':', val);
-                                            // Fallback: treat as single category
-                                            val = val ? [val] : [];
-                                        }
-                                    }
+                                    // Handle categories array - FIXED VERSION
+if (key.trim() === 'categories') {
+    console.log('Raw categories value:', val);
+    
+    try {
+        // Skip if empty string or just whitespace
+        if (!val || val.trim() === '') {
+            val = [];
+        } else if (val.startsWith('[') && val.endsWith(']')) {
+            // JSON array format
+            val = JSON.parse(val.replace(/'/g, '"'));
+        } else if (val.includes(',')) {
+            // Comma separated
+            val = val.split(',').map(item => item.trim().replace(/['"]/g, ''));
+        } else if (val.trim()) {
+            // Single category
+            val = [val.trim()];
+        } else {
+            val = [];
+        }
+        
+        console.log('Parsed categories result:', val);
+    } catch (e) {
+        console.log('Categories parsing error:', e);
+        val = [];
+    }
+}
                                     
                                     report[key.trim()] = val;
                                 }
