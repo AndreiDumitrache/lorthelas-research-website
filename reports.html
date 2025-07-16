@@ -712,7 +712,7 @@ async function loadReports() {
                 displayReports(filteredReports);
                 setupFiltering();
                 
-             catch (error) {
+        } catch (error) {
             console.error('Error loading reports:', error);
             document.getElementById('loading').innerHTML = '<p>Error loading reports. Please try again later.</p>';
         }
