@@ -705,18 +705,6 @@ async function loadReports() {
     }
 }
                 
-                // Sort by date (newest first)
-                allReports.sort((a, b) => new Date(b.date) - new Date(a.date));
-                
-                filteredReports = [...allReports];
-                displayReports(filteredReports);
-                setupFiltering();
-                
-        } catch (error) {
-            console.error('Error loading reports:', error);
-            document.getElementById('loading').innerHTML = '<p>Error loading reports. Please try again later.</p>';
-        }
-    }
 
         // Function to display reports
         function displayReports(reports, searchTerm = '') {
