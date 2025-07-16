@@ -12,7 +12,7 @@ collections:
     fields:
       - {label: "Title", name: "title", widget: "string"}
       - {label: "Date", name: "date", widget: "datetime"}
-      - {label: "Category", name: "category", widget: "select", options: ["Macroeconomic", "Political Economy", "Portfolio Strategy", "Market Analysis", "Geopolitical"]}
+      - {label: "Categories", name: "categories", widget: "select", multiple: true, options: ["Macroeconomic", "Political Economy", "Portfolio Strategy", "Market Analysis", "Geopolitical"], hint: "Select one or more categories that apply to this report"}
       - {label: "Summary", name: "summary", widget: "text"}
       - {label: "Content", name: "body", widget: "markdown"}
       - {label: "PDF File", name: "pdf", widget: "file", required: false}
