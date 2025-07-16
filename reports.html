@@ -622,46 +622,63 @@
         let currentFilter = 'all';
 
         // Function to load reports from GitHub API
-        // Function to load reports from GitHub API with better cache busting
-async function loadReports() {
-    try {
-        console.log('Loading reports...');
-        
-        // First, let's try the simplest approach - check if reports folder exists
-        const testResponse = await fetch('https://raw.githubusercontent.com/AndreiDumitrache/lorthelas-research-website/main/content/reports/test.md');
-        console.log('Test file response:', testResponse.status);
-        
-        // For now, let's create a simple static list and test the UI
-        const sampleReports = [
-            {
-                title: "Sample Economic Report",
-                date: "2025-01-16",
-                categories: ["Macroeconomic", "Market Analysis"],
-                summary: "Sample report to test the interface while we fix the loading issue.",
-                filename: "sample-report.md"
-            },
-            {
-                title: "Test Political Economy Report", 
-                date: "2025-01-15",
-                categories: ["Political Economy"],
-                summary: "Another test report with single category.",
-                filename: "test-report.md"
-            }
-        ];
-        
-        allReports = sampleReports;
-        filteredReports = [...allReports];
-        displayReports(filteredReports);
-        setupFiltering();
-        
-        console.log('Loaded sample reports successfully');
-        
-    } catch (error) {
-        console.error('Error:', error);
-        document.getElementById('loading').innerHTML = '<p>Error loading reports. Please try again later.</p>';
-    }
-}
+        async function loadReports() {
+            try {
+                const response = await fetch('https://api.github.com/repos/AndreiDumitrache/lorthelas-research-website/contents/content/reports');
+                const files = await response.json();
                 
+                allReports = [];
+                
+                for (const file of files) {
+                    if (file.name.endsWith('.md')) {
+                        const contentResponse = await fetch(file.download_url);
+                        const content = await contentResponse.text();
+                        
+                        // Parse frontmatter
+                        const parts = content.split('---');
+                        if (parts.length >= 3) {
+                            const frontmatter = parts[1];
+                            const body = parts.slice(2).join('---').trim();
+                            
+                            const report = {};
+                            frontmatter.split('\n').forEach(line => {
+                                const [key, ...value] = line.split(':');
+                                if (key && value.length) {
+                                    let val = value.join(':').trim();
+                                    // Remove quotes
+                                    val = val.replace(/^["']|["']$/g, '');
+                                    
+                                    // Handle categories array
+                                    if (key.trim() === 'categories') {
+                                        // Parse YAML array format
+                                        if (val.startsWith('[') && val.endsWith(']')) {
+                                            val = val.slice(1, -1).split(',').map(item => item.trim().replace(/['"]/g, ''));
+                                        }
+                                    }
+                                    
+                                    report[key.trim()] = val;
+                                }
+                            });
+                            
+                            report.body = body;
+                            report.filename = file.name;
+                            allReports.push(report);
+                        }
+                    }
+                }
+                
+                // Sort by date (newest first)
+                allReports.sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                filteredReports = [...allReports];
+                displayReports(filteredReports);
+                setupFiltering();
+                
+            } catch (error) {
+                console.error('Error loading reports:', error);
+                document.getElementById('loading').innerHTML = '<p>Error loading reports. Please try again later.</p>';
+            }
+        }
 
         // Function to display reports
         function displayReports(reports, searchTerm = '') {
