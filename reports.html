@@ -713,10 +713,10 @@ async function loadReports() {
                 setupFiltering();
                 
             } catch (error) {
-                console.error('Error loading reports:', error);
-                document.getElementById('loading').innerHTML = '<p>Error loading reports. Please try again later.</p>';
-            }
+            console.error('Error loading reports:', error);
+            document.getElementById('loading').innerHTML = '<p>Error loading reports. Please try again later.</p>';
         }
+    }
 
         // Function to display reports
         function displayReports(reports, searchTerm = '') {
