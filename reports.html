@@ -699,7 +699,7 @@ async function loadReports() {
         
         console.log('Loaded', allReports.length, 'reports with cache busting');
         
-    } catch (error) {
+     catch (error) {
         console.error('Error loading reports:', error);
         document.getElementById('loading').innerHTML = '<p>Error loading reports. Please try again later.</p>';
     }
