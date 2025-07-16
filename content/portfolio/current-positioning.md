@@ -24,7 +24,7 @@ metrics:
   sharpe_ratio: "1.23"
   volatility: 12.8%
   max_drawdown: -7.1%
-  beta: "0.70"
+  beta: "0.72"
   alpha: +2.1%
 highlights:
   - icon: 🏦
