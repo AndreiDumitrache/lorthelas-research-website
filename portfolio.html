@@ -11,6 +11,21 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        .chart-container {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto 2rem auto;
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 15px rgba(107, 114, 128, 0.1);
+}
+
+#allocation-chart {
+    width: 100% !important;
+    height: auto !important;
+    max-height: 300px;
+}
         * {
             margin: 0;
             padding: 0;
@@ -621,9 +636,9 @@
             <div class="allocation-section">
                 <div class="allocation-chart">
                     <h3 class="chart-title">Strategic Asset Allocation</h3>
-                    <div class="chart-placeholder">
-                        [Interactive Allocation Chart Would Appear Here]
-                    </div>
+                    <div class="chart-container">
+    <canvas id="allocation-chart" width="400" height="300"></canvas>
+</div>
                     <div class="allocation-legend">
                         <div class="legend-item">
                             <div class="legend-color" style="background: #374151;"></div>
@@ -754,10 +769,15 @@ async function loadPortfolioData() {
         if (alpha) updateMetricByLabel('Alpha', alpha);
         
         // Try to update allocation data
+        // Try to update allocation data
         const allocationData = extractAllocationData(content);
         if (allocationData.length > 0) {
             updateAllocationLegend(allocationData);
             console.log('Updated allocation with', allocationData.length, 'items');
+        } else {
+            // Create default chart if no CMS data found
+            console.log('No allocation data from CMS, creating default chart');
+            createAllocationChart();
         }
         
         console.log('Portfolio metrics updated successfully!');
@@ -864,6 +884,7 @@ function extractAllocationData(content) {
 }
 
 // Update allocation legend
+// Update allocation legend
 function updateAllocationLegend(allocation) {
     const legend = document.querySelector('.allocation-legend');
     if (!legend) {
@@ -880,6 +901,77 @@ function updateAllocationLegend(allocation) {
             <span class="legend-percentage">${item.percentage}%</span>
         </div>
     `).join('');
+    
+    // Update the chart too
+    createAllocationChart(allocation);
+}
+        // Create pie chart for allocation
+function createAllocationChart(allocationData) {
+    const canvas = document.getElementById('allocation-chart');
+    if (!canvas) {
+        console.log('Chart canvas not found');
+        return;
+    }
+    
+    const ctx = canvas.getContext('2d');
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = Math.min(centerX, centerY) - 20;
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    if (!allocationData || allocationData.length === 0) {
+        // Show default/placeholder chart
+        allocationData = [
+            {asset: 'Equities', percentage: 45, color: '#374151'},
+            {asset: 'Fixed Income', percentage: 30, color: '#6b7280'},
+            {asset: 'Commodities', percentage: 10, color: '#9ca3af'},
+            {asset: 'Alternatives', percentage: 10, color: '#d1d5db'},
+            {asset: 'Cash', percentage: 5, color: '#f3f4f6'}
+        ];
+    }
+    
+    let currentAngle = -Math.PI / 2; // Start at top
+    
+    allocationData.forEach(item => {
+        const sliceAngle = (item.percentage / 100) * 2 * Math.PI;
+        
+        // Draw slice
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + sliceAngle);
+        ctx.closePath();
+        ctx.fillStyle = item.color || '#374151';
+        ctx.fill();
+        
+        // Draw border
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // Draw percentage labels
+        const labelAngle = currentAngle + sliceAngle / 2;
+        const labelX = centerX + Math.cos(labelAngle) * (radius * 0.7);
+        const labelY = centerY + Math.sin(labelAngle) * (radius * 0.7);
+        
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 14px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        
+        // Add shadow for better readability
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+        ctx.shadowBlur = 2;
+        ctx.fillText(`${item.percentage}%`, labelX, labelY);
+        
+        // Reset shadow
+        ctx.shadowBlur = 0;
+        
+        currentAngle += sliceAngle;
+    });
+    
+    console.log('Allocation chart updated with', allocationData.length, 'segments');
 }
     </script>
 </body>
