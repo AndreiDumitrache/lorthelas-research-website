@@ -13,7 +13,11 @@ collections:
       - {label: "Title", name: "title", widget: "string"}
       - {label: "Date", name: "date", widget: "datetime"}
       - {label: "Category", name: "category", widget: "select", options: ["Macroeconomic", "Political Economy", "Portfolio Strategy", "Market Analysis", "Geopolitical"]}
-      - {label: "Summary", name: "summary", widget: "markdown", required: false, minimal: true, hint: "Detailed summary - write as much as needed"}
+      - name: "summary"
+        label: "Summary"
+        widget: "text"
+        required: false
+        hint: "Write as much as you need - no character limit"
       - {label: "Content", name: "body", widget: "markdown"}
       - {label: "PDF File", name: "pdf", widget: "file", required: false}
   - name: "portfolio"
