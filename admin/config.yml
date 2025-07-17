@@ -13,10 +13,9 @@ collections:
       - {label: "Title", name: "title", widget: "string"}
       - {label: "Date", name: "date", widget: "datetime"}
       - {label: "Category", name: "category", widget: "select", options: ["Macroeconomic", "Political Economy", "Portfolio Strategy", "Market Analysis", "Geopolitical"]}
-      - {label: "Summary", name: "summary", widget: "text", hint: "Brief summary of the report"}
+      - {label: "Summary", name: "summary", widget: "markdown", required: false, minimal: true, hint: "Detailed summary - write as much as needed"}
       - {label: "Content", name: "body", widget: "markdown"}
       - {label: "PDF File", name: "pdf", widget: "file", required: false}
-
   - name: "portfolio"
     label: "Portfolio Strategy"
     files:
@@ -51,7 +50,6 @@ collections:
               - {label: "Icon", name: "icon", widget: "string"}
               - {label: "Title", name: "title", widget: "string"}
               - {label: "Description", name: "description", widget: "text"}
-
   - name: "settings"
     label: "Site Settings"
     files:
