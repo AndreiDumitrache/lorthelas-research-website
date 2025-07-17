@@ -14,10 +14,12 @@ collections:
       - {label: "Date", name: "date", widget: "datetime"}
       - {label: "Category", name: "category", widget: "select", options: ["Macroeconomic", "Political Economy", "Portfolio Strategy", "Market Analysis", "Geopolitical"]}
       - name: "summary"
-        label: "Summary"
-        widget: "text"
-        required: false
-        hint: "Write as much as you need - no character limit"
+  label: "Summary"
+  widget: "textarea"
+  required: false
+  hint: "Write detailed summary - no character limit"
+  default: ""
+  pattern: ['^[\s\S]*$', 'Any text allowed']
       - {label: "Content", name: "body", widget: "markdown"}
       - {label: "PDF File", name: "pdf", widget: "file", required: false}
   - name: "portfolio"
