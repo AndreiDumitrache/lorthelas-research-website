@@ -19,7 +19,7 @@ metrics:
   volatility: 6.59%
   max_drawdown: -5.88%
   beta: "0.72"
-  alpha: +2.1%
+  alpha: +1.3%
 highlights:
   - icon: 🏦
     title: Fixed Income Focus
