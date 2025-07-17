@@ -2,12 +2,9 @@
 title: Creation of the cryptocurrency fund
 date: 2025-07-17T10:36:38.119Z
 category: Portfolio Strategy
-summary: >-
-  W﻿e're excited to announce the release of the Lorthelas Cryptocurrency Fund
-  through which we would like to offer investors the possibility of engaging in
-  novel industries and increase their profits and exposure to riskier assets
-
-  which have shown great capabilities in the past decade and a half.
+summary: W﻿e're excited to announce the release of the Lorthelas Cryptocurrency
+  Fund through which we would like to offer investors the possibility of
+  engaging in novel industries.
 pdf: /images/lorthelas-research-cryptocurrency-fund.pdf
 ---
 With an ever increasing relevancy in today’s financial space, the cryptocurrency industry is attracting more and more investors to a risky platform of trading, leaving behind important aspects of traditional
