@@ -619,26 +619,79 @@
                         const contentResponse = await fetch(file.download_url);
                         const content = await contentResponse.text();
                         
-                        // Parse frontmatter
-                        const parts = content.split('---');
-                        if (parts.length >= 3) {
-                            const frontmatter = parts[1];
-                            const body = parts.slice(2).join('---').trim();
-                            
-                            const report = {};
-                            frontmatter.split('\n').forEach(line => {
-                                const [key, ...value] = line.split(':');
-                                if (key && value.length) {
-                                    let val = value.join(':').trim();
-                                    // Remove quotes
-                                    val = val.replace(/^["']|["']$/g, '');
-                                    report[key.trim()] = val;
-                                }
-                            });
-                            
-                            report.body = body;
-                            report.filename = file.name;
-                            reports.push(report);
+                        // Parse frontmatter - ENHANCED VERSION
+const parts = content.split('---');
+if (parts.length >= 3) {
+    const frontmatter = parts[1];
+    const body = parts.slice(2).join('---').trim();
+    
+    const report = {};
+    
+    // Handle YAML properly
+    const lines = frontmatter.split('\n');
+    let currentKey = null;
+    let multilineValue = '';
+    let inMultiline = false;
+    
+    lines.forEach(line => {
+        const trimmedLine = line.trim();
+        
+        if (trimmedLine.includes(':') && !inMultiline) {
+            // Save previous multiline value
+            if (currentKey && inMultiline) {
+                report[currentKey] = multilineValue.trim();
+                multilineValue = '';
+                inMultiline = false;
+            }
+            
+            const [key, ...value] = trimmedLine.split(':');
+            const val = value.join(':').trim();
+            
+            if (val === '>-' || val === '>' || val === '|-') {
+                // Start multiline
+                currentKey = key.trim();
+                inMultiline = true;
+                multilineValue = '';
+            } else {
+                // Regular key-value
+                let processedVal = val.replace(/^["']|["']$/g, '');
+                
+                // Handle categories array
+                if (key.trim() === 'categories') {
+                    try {
+                        if (processedVal.startsWith('[') && processedVal.endsWith(']')) {
+                            processedVal = JSON.parse(processedVal.replace(/'/g, '"'));
+                        } else if (processedVal.includes(',')) {
+                            processedVal = processedVal.split(',').map(item => item.trim().replace(/['"]/g, ''));
+                        } else if (processedVal.trim()) {
+                            processedVal = [processedVal.trim()];
+                        } else {
+                            processedVal = [];
+                        }
+                    } catch (e) {
+                        processedVal = processedVal ? [processedVal] : [];
+                    }
+                }
+                
+                report[key.trim()] = processedVal;
+            }
+        } else if (inMultiline && trimmedLine) {
+            // Add to multiline value
+            multilineValue += (multilineValue ? ' ' : '') + trimmedLine;
+        }
+    });
+    
+    // Save final multiline value
+    if (currentKey && inMultiline) {
+        report[currentKey] = multilineValue.trim();
+    }
+    
+    report.body = body;
+    report.filename = file.name;
+    allReports.push(report);
+    
+    console.log('Loaded report:', report.title, 'Summary:', report.summary);
+}
                         }
                     }
                 }
