@@ -775,39 +775,29 @@
         let displayedReports = [];
         const reportsPerPage = 9; // Show 9 reports initially, then 6 more each time
 
-        // Function to load reports from GitHub API
+        // ENHANCED: Function to load reports with proper YAML parsing
         async function loadReports() {
             try {
                 const response = await fetch('https://api.github.com/repos/AndreiDumitrache/lorthelas-research-website/contents/content/reports');
                 const files = await response.json();
                 
-                allReports = []; // NEW: Store all reports globally
+                allReports = [];
                 
                 for (const file of files) {
                     if (file.name.endsWith('.md')) {
                         const contentResponse = await fetch(file.download_url);
                         const content = await contentResponse.text();
                         
-                        // Parse frontmatter
+                        // ENHANCED: Parse frontmatter with multiline support
                         const parts = content.split('---');
                         if (parts.length >= 3) {
                             const frontmatter = parts[1];
                             const body = parts.slice(2).join('---').trim();
                             
-                            const report = {};
-                            frontmatter.split('\n').forEach(line => {
-                                const [key, ...value] = line.split(':');
-                                if (key && value.length) {
-                                    let val = value.join(':').trim();
-                                    // Remove quotes
-                                    val = val.replace(/^["']|["']$/g, '');
-                                    report[key.trim()] = val;
-                                }
-                            });
-                            
+                            const report = parseYamlFrontmatter(frontmatter);
                             report.body = body;
                             report.filename = file.name;
-                            allReports.push(report); // NEW: Add to global array
+                            allReports.push(report);
                         }
                     }
                 }
@@ -815,17 +805,88 @@
                 // Sort by date (newest first)
                 allReports.sort((a, b) => new Date(b.date) - new Date(a.date));
                 
-                // NEW: Initialize with first batch of reports
+                // Initialize with first batch of reports
                 displayedReports = allReports.slice(0, reportsPerPage);
                 displayReports(displayedReports);
                 updateLoadMoreButton();
                 setupFiltering();
-                generateArchive(); // NEW: Generate archive section
+                generateArchive();
                 
             } catch (error) {
                 console.error('Error loading reports:', error);
                 document.getElementById('loading').innerHTML = '<p>Error loading reports. Please try again later.</p>';
             }
+        }
+
+        // NEW: Enhanced YAML parser that handles multiline content
+        function parseYamlFrontmatter(yamlText) {
+            const report = {};
+            const lines = yamlText.split('\n').map(line => line.replace(/\r$/, ''));
+            
+            let i = 0;
+            while (i < lines.length) {
+                const line = lines[i].trim();
+                
+                if (!line || line.startsWith('#')) {
+                    i++;
+                    continue;
+                }
+                
+                const colonIndex = line.indexOf(':');
+                if (colonIndex === -1) {
+                    i++;
+                    continue;
+                }
+                
+                const key = line.substring(0, colonIndex).trim();
+                let value = line.substring(colonIndex + 1).trim();
+                
+                // Check for multiline values (|, >, >-, |-)
+                if (value === '|' || value === '>' || value === '>-' || value === '|-' || value === '') {
+                    // This is a multiline field, collect the following indented lines
+                    const multilineContent = [];
+                    i++; // Move to next line
+                    
+                    while (i < lines.length) {
+                        const nextLine = lines[i];
+                        
+                        // If line starts with spaces and is not a new key, it's part of multiline content
+                        if (nextLine.startsWith('  ') || nextLine.startsWith('\t') || (nextLine.trim() === '' && i < lines.length - 1)) {
+                            multilineContent.push(nextLine.replace(/^  /, '').replace(/^\t/, ''));
+                            i++;
+                        } else if (nextLine.trim() === '') {
+                            // Empty line in multiline content
+                            multilineContent.push('');
+                            i++;
+                        } else if (nextLine.includes(':') && !nextLine.startsWith('  ')) {
+                            // This is a new key, stop collecting multiline content
+                            break;
+                        } else {
+                            // Continuation of multiline content
+                            multilineContent.push(nextLine.trim());
+                            i++;
+                        }
+                    }
+                    
+                    // Join the multiline content
+                    value = multilineContent.join(' ').trim();
+                    
+                    // Remove any markdown formatting for display in cards
+                    value = value.replace(/\*\*(.*?)\*\*/g, '$1'); // Remove bold
+                    value = value.replace(/\*(.*?)\*/g, '$1'); // Remove italic
+                    value = value.replace(/#{1,6}\s+/g, ''); // Remove headers
+                    
+                } else {
+                    // Single line value, remove quotes
+                    value = value.replace(/^["']|["']$/g, '');
+                    i++;
+                }
+                
+                report[key] = value;
+                console.log(`Parsed ${key}:`, value.substring(0, 100) + (value.length > 100 ? '...' : ''));
+            }
+            
+            return report;
         }
 
         // NEW: Load more reports function
@@ -874,6 +935,21 @@
                     day: 'numeric'
                 });
                 
+                // ENHANCED: Better summary processing
+                let summary = report.summary || 'No summary available.';
+                
+                // Clean up any remaining markdown or YAML artifacts
+                summary = summary.replace(/^[>|][-+]?\s*/, ''); // Remove YAML indicators
+                summary = summary.replace(/\n+/g, ' '); // Replace line breaks with spaces
+                summary = summary.trim();
+                
+                // If summary is still empty or just whitespace
+                if (!summary || summary.length < 3) {
+                    summary = 'No summary available.';
+                }
+                
+                console.log(`Report: ${report.title}, Summary length: ${summary.length}`);
+                
                 return `
                     <div class="report-card">
                         <div class="report-meta">
@@ -881,7 +957,7 @@
                             <span class="report-category">${report.category || 'Uncategorized'}</span>
                         </div>
                         <h3 class="report-title">${report.title || 'Untitled Report'}</h3>
-                        <p class="report-summary">${report.summary || 'No summary available.'}</p>
+                        <p class="report-summary">${summary}</p>
                         <div class="report-actions">
                             <a href="report.html?report=${report.filename}" class="read-more">Read Report</a>
                             ${report.pdf ? `<a href="${report.pdf}" class="download-pdf">📄 Download PDF</a>` : ''}
