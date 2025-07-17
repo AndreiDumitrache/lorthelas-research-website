@@ -638,16 +638,42 @@ async function loadReports() {
                             
                             // Handle categories array
                             if (key.trim() === 'categories') {
-                                try {
-                                    if (val.startsWith('[') && val.endsWith(']')) {
-                                        val = val.slice(1, -1).split(',').map(item => item.trim().replace(/['"]/g, ''));
-                                    }
-                                } catch (e) {
-                                    console.log('Categories parsing error:', e);
-                                }
-                            }
-                            
-                            report[key.trim()] = val;
+    try {
+        if (val.startsWith('[') && val.endsWith(']')) {
+            val = val.slice(1, -1).split(',').map(item => item.trim().replace(/['"]/g, ''));
+        }
+    } catch (e) {
+        console.log('Categories parsing error:', e);
+    }
+}
+
+// Special handling for summary field if it's multiline YAML
+if (key.trim() === 'summary' && (val === '>' || val === '>-' || val === '')) {
+    // This is a multiline summary, collect the next lines
+    const summaryLines = [];
+    const allLines = frontmatter.split('\n');
+    const currentLineIndex = allLines.findIndex(l => l.trim().startsWith('summary:'));
+    
+    for (let i = currentLineIndex + 1; i < allLines.length; i++) {
+        const nextLine = allLines[i];
+        if (nextLine.trim() && !nextLine.includes(':') && nextLine.startsWith(' ')) {
+            summaryLines.push(nextLine.trim());
+        } else if (nextLine.trim() && nextLine.includes(':')) {
+            break; // Next field started
+        }
+    }
+    
+    if (summaryLines.length > 0) {
+        val = summaryLines.join(' ');
+    }
+}
+
+report[key.trim()] = val;
+
+// Debug summary parsing
+if (key.trim() === 'summary') {
+    console.log('Final summary:', val, 'Length:', val.length);
+}
 
 // Debug summary parsing
 if (key.trim() === 'summary') {
