@@ -216,6 +216,68 @@
             margin: 1.5rem 0;
         }
 
+        /* NEW: Professional image styling for reports */
+        .report-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            margin: 2rem 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .report-content img:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        /* NEW: Image caption styling */
+        .image-caption {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #6b7280;
+            font-style: italic;
+            margin-top: -1rem;
+            margin-bottom: 2rem;
+        }
+
+        /* NEW: Image modal for full-size viewing */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            cursor: pointer;
+        }
+
+        .image-modal img {
+            display: block;
+            margin: auto;
+            max-width: 90%;
+            max-height: 90%;
+            margin-top: 5%;
+            border-radius: 8px;
+            box-shadow: none;
+        }
+
+        .image-modal-close {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+
         .report-actions {
             margin-top: 3rem;
             padding-top: 2rem;
@@ -328,6 +390,10 @@
             .container {
                 padding: 0 1rem;
             }
+
+            .report-content img {
+                margin: 1.5rem 0;
+            }
         }
     </style>
 </head>
@@ -381,14 +447,20 @@
                 </div>
 
                 <div class="report-actions">
-    <a href="reports.html" class="action-button">← Back to Reports</a>
-    <a href="#" class="action-button" id="download-pdf" style="display: none;">📄 Download PDF</a>
-    <button class="action-button share-button" onclick="toggleShareMenu(event)" id="share-button" style="background: #3b82f6; color: white; border: none;">
-        📤 Share Report
-    </button>
-</div>
+                    <a href="reports.html" class="action-button">← Back to Reports</a>
+                    <a href="#" class="action-button" id="download-pdf" style="display: none;">📄 Download PDF</a>
+                    <button class="action-button share-button" onclick="toggleShareMenu(event)" id="share-button" style="background: #3b82f6; color: white; border: none;">
+                        📤 Share Report
+                    </button>
+                </div>
             </div>
         </div>
+    </div>
+
+    <!-- NEW: Image Modal for full-size viewing -->
+    <div id="image-modal" class="image-modal" onclick="closeImageModal()">
+        <span class="image-modal-close" onclick="closeImageModal()">&times;</span>
+        <img id="modal-image" src="" alt="">
     </div>
 
     <!-- Footer -->
@@ -499,9 +571,12 @@
             document.getElementById('report-title').textContent = report.title || 'Untitled Report';
             document.getElementById('report-summary').textContent = report.summary || 'No summary available.';
             
-            // Convert markdown to HTML (basic conversion)
+            // Convert markdown to HTML (enhanced with image support)
             const htmlContent = convertMarkdownToHTML(content);
             document.getElementById('report-content').innerHTML = htmlContent;
+            
+            // ENHANCED: Add click handlers for images after content is loaded
+            addImageClickHandlers();
             
             // Show PDF download if available
             if (report.pdf) {
@@ -511,117 +586,184 @@
             }
         }
 
-        // Basic markdown to HTML converter
+        // ENHANCED: Comprehensive markdown to HTML converter with image support
         function convertMarkdownToHTML(markdown) {
             let html = markdown;
             
-            // Headers
+            // STEP 1: Convert images FIRST (most important fix)
+            html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, function(match, alt, src) {
+                console.log('Found image:', alt, src);
+                
+                // Handle different image path formats
+                let imageSrc = src;
+                
+                // Convert relative paths to GitHub raw URLs
+                if (src.startsWith('/images/')) {
+                    imageSrc = `https://raw.githubusercontent.com/AndreiDumitrache/lorthelas-research-website/main${src}`;
+                } else if (src.startsWith('images/')) {
+                    imageSrc = `https://raw.githubusercontent.com/AndreiDumitrache/lorthelas-research-website/main/${src}`;
+                } else if (!src.startsWith('http')) {
+                    // Assume it's a relative path from the repo root
+                    imageSrc = `https://raw.githubusercontent.com/AndreiDumitrache/lorthelas-research-website/main/${src}`;
+                }
+                
+                console.log('Converted image URL:', imageSrc);
+                
+                // Create professional image HTML with caption support
+                const imageHtml = `<img src="${imageSrc}" alt="${alt}" onclick="openImageModal('${imageSrc}', '${alt}')" loading="lazy">`;
+                const captionHtml = alt ? `<div class="image-caption">${alt}</div>` : '';
+                
+                return imageHtml + captionHtml;
+            });
+            
+            // STEP 2: Headers
             html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
             html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
             html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
             
-            // Bold and italic
-            html = html.replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>');
-            html = html.replace(/\*(.*)\*/gim, '<em>$1</em>');
+            // STEP 3: Bold and italic
+            html = html.replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>');
+            html = html.replace(/\*(.*?)\*/gim, '<em>$1</em>');
             
-            // Paragraphs
-            html = html.replace(/\n\n/gim, '</p><p>');
+            // STEP 4: Line breaks and paragraphs
+            html = html.replace(/\n\s*\n/gim, '</p><p>');
+            html = html.replace(/\n/gim, '<br>');
+            
+            // STEP 5: Wrap in paragraphs
             html = '<p>' + html + '</p>';
             
-            // Clean up empty paragraphs
+            // STEP 6: Clean up
             html = html.replace(/<p><\/p>/gim, '');
+            html = html.replace(/<p>(<h[1-6]>)/gim, '$1');
+            html = html.replace(/(<\/h[1-6]>)<\/p>/gim, '$1');
+            html = html.replace(/<p>(<img[^>]*>)/gim, '$1');
+            html = html.replace(/(<\/div>)<\/p>/gim, '$1');
             
+            console.log('Final HTML:', html);
             return html;
+        }
+
+        // NEW: Add click handlers to images for modal viewing
+        function addImageClickHandlers() {
+            const images = document.querySelectorAll('.report-content img');
+            images.forEach(img => {
+                img.style.cursor = 'pointer';
+                img.addEventListener('click', function() {
+                    openImageModal(this.src, this.alt);
+                });
+            });
+        }
+
+        // NEW: Image modal functions
+        function openImageModal(src, alt) {
+            const modal = document.getElementById('image-modal');
+            const modalImg = document.getElementById('modal-image');
+            modal.style.display = 'block';
+            modalImg.src = src;
+            modalImg.alt = alt;
+        }
+
+        function closeImageModal() {
+            document.getElementById('image-modal').style.display = 'none';
         }
 
         // Load report when page loads
         document.addEventListener('DOMContentLoaded', loadReport);
+
         // Share functionality for individual reports
-let currentReportTitle = '';
-let currentReportFilename = '';
+        let currentReportTitle = '';
+        let currentReportFilename = '';
 
-function toggleShareMenu(event) {
-    // Remove any existing menu
-    let existingMenu = document.getElementById('temp-share-menu');
-    if (existingMenu) {
-        existingMenu.remove();
-        return;
-    }
-    
-    // Create new share menu popup
-    const menu = document.createElement('div');
-    menu.id = 'temp-share-menu';
-    menu.style.cssText = `
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: white;
-        border: 2px solid #374151;
-        border-radius: 12px;
-        padding: 1.5rem;
-        box-shadow: 0 8px 30px rgba(0,0,0,0.4);
-        z-index: 1000;
-        min-width: 280px;
-    `;
-    
-    menu.innerHTML = `
-        <div style="margin-bottom: 1rem; font-weight: bold; font-size: 1.1rem; color: #374151;">Share Report</div>
-        <div style="margin-bottom: 1rem; color: #6b7280; font-size: 0.9rem;">${currentReportTitle}</div>
-        <button onclick="shareViaEmail()" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer;">📧 Share via Email</button>
-        <button onclick="shareViaLinkedIn()" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer;">💼 Share on LinkedIn</button>
-        <button onclick="shareViaTwitter()" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer;">🐦 Share on Twitter</button>
-        <button onclick="copyReportLink()" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer;">🔗 Copy Link</button>
-        <button onclick="closeShareMenu()" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: #f8fafc; cursor: pointer;">❌ Close</button>
-    `;
-    
-    document.body.appendChild(menu);
-    event.stopPropagation();
-}
+        function toggleShareMenu(event) {
+            // Remove any existing menu
+            let existingMenu = document.getElementById('temp-share-menu');
+            if (existingMenu) {
+                existingMenu.remove();
+                return;
+            }
+            
+            // Create new share menu popup
+            const menu = document.createElement('div');
+            menu.id = 'temp-share-menu';
+            menu.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: white;
+                border: 2px solid #374151;
+                border-radius: 12px;
+                padding: 1.5rem;
+                box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+                z-index: 1000;
+                min-width: 280px;
+            `;
+            
+            menu.innerHTML = `
+                <div style="margin-bottom: 1rem; font-weight: bold; font-size: 1.1rem; color: #374151;">Share Report</div>
+                <div style="margin-bottom: 1rem; color: #6b7280; font-size: 0.9rem;">${currentReportTitle}</div>
+                <button onclick="shareViaEmail()" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer;">📧 Share via Email</button>
+                <button onclick="shareViaLinkedIn()" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer;">💼 Share on LinkedIn</button>
+                <button onclick="shareViaTwitter()" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer;">🐦 Share on Twitter</button>
+                <button onclick="copyReportLink()" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer;">🔗 Copy Link</button>
+                <button onclick="closeShareMenu()" style="display: block; width: 100%; margin: 0.5rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: #f8fafc; cursor: pointer;">❌ Close</button>
+            `;
+            
+            document.body.appendChild(menu);
+            event.stopPropagation();
+        }
 
-function closeShareMenu() {
-    const menu = document.getElementById('temp-share-menu');
-    if (menu) menu.remove();
-}
+        function closeShareMenu() {
+            const menu = document.getElementById('temp-share-menu');
+            if (menu) menu.remove();
+        }
 
-function shareViaEmail() {
-    const url = window.location.href;
-    const subject = encodeURIComponent(`Research Report: ${currentReportTitle}`);
-    const body = encodeURIComponent(`I thought you might find this research report interesting:\n\n${currentReportTitle}\n\nRead it here: ${url}\n\nBest regards`);
-    window.open(`mailto:?subject=${subject}&body=${body}`);
-    closeShareMenu();
-}
+        function shareViaEmail() {
+            const url = window.location.href;
+            const subject = encodeURIComponent(`Research Report: ${currentReportTitle}`);
+            const body = encodeURIComponent(`I thought you might find this research report interesting:\n\n${currentReportTitle}\n\nRead it here: ${url}\n\nBest regards`);
+            window.open(`mailto:?subject=${subject}&body=${body}`);
+            closeShareMenu();
+        }
 
-function copyReportLink() {
-    const url = window.location.href;
-    
-    if (navigator.clipboard) {
-        navigator.clipboard.writeText(url).then(() => {
-            alert('✅ Report link copied to clipboard!');
-        });
-    } else {
-        prompt('Copy this link:', url);
-    }
-    closeShareMenu();
-}
+        function copyReportLink() {
+            const url = window.location.href;
+            
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(url).then(() => {
+                    alert('✅ Report link copied to clipboard!');
+                });
+            } else {
+                prompt('Copy this link:', url);
+            }
+            closeShareMenu();
+        }
 
-// Close menu when clicking outside
-document.addEventListener('click', function() {
-    closeShareMenu();
-});
         function shareViaLinkedIn() {
-    const url = window.location.href;
-    const text = encodeURIComponent(`New research report: ${currentReportTitle}`);
-    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}&title=${text}`, '_blank');
-    closeShareMenu();
-}
+            const url = window.location.href;
+            const text = encodeURIComponent(`New research report: ${currentReportTitle}`);
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}&title=${text}`, '_blank');
+            closeShareMenu();
+        }
 
-function shareViaTwitter() {
-    const url = window.location.href;
-    const text = encodeURIComponent(`Check out this research report: ${currentReportTitle} ${url} #Research #Finance #LorthelaResearch`);
-    window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
-    closeShareMenu();
-}
+        function shareViaTwitter() {
+            const url = window.location.href;
+            const text = encodeURIComponent(`Check out this research report: ${currentReportTitle} ${url} #Research #Finance #LorthelaResearch`);
+            window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
+            closeShareMenu();
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function() {
+            closeShareMenu();
+        });
+
+        // Close image modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeImageModal();
+            }
+        });
     </script>
 </body>
 </html>
