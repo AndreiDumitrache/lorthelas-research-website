@@ -434,70 +434,94 @@
             font-size: 1.1rem;
         }
 
-        .archive-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        .archive-year {
-            background: white;
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 4px 20px rgba(107, 114, 128, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .archive-year:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 30px rgba(107, 114, 128, 0.15);
-        }
-
-        .archive-year-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #374151;
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #e5e7eb;
-        }
-
-        .archive-month {
+        .archive-controls {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem 1rem;
-            background: #f8fafc;
-            border-radius: 12px;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            margin-bottom: 0.5rem;
+            justify-content: center;
+            gap: 2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            flex-wrap: wrap;
         }
 
-        .archive-month:hover {
+        .archive-dropdown-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            min-width: 180px;
+        }
+
+        .archive-dropdown-label {
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .archive-dropdown {
+            padding: 1rem 1.5rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            background: white;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 1rem center;
+            background-repeat: no-repeat;
+            background-size: 1rem;
+            padding-right: 3rem;
+        }
+
+        .archive-dropdown:hover {
+            border-color: #374151;
+            box-shadow: 0 4px 15px rgba(107, 114, 128, 0.1);
+        }
+
+        .archive-dropdown:focus {
+            outline: none;
+            border-color: #374151;
+            box-shadow: 0 0 0 3px rgba(55, 65, 81, 0.1);
+        }
+
+        .archive-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .archive-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .archive-btn-primary {
             background: #374151;
             color: white;
-            transform: translateX(5px);
         }
 
-        .archive-month-name {
-            font-weight: 600;
+        .archive-btn-primary:hover {
+            background: #1f2937;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(55, 65, 81, 0.3);
         }
 
-        .archive-month-count {
-            background: rgba(55, 65, 81, 0.1);
+        .archive-btn-secondary {
+            background: #f3f4f6;
             color: #374151;
-            padding: 0.25rem 0.5rem;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            font-weight: 700;
         }
 
-        .archive-month:hover .archive-month-count {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
+        .archive-btn-secondary:hover {
+            background: #e5e7eb;
         }
 
         footer {
@@ -694,8 +718,23 @@
         <div class="archive-section" id="archive-section">
             <h2 class="archive-title">Report Archive</h2>
             <p class="archive-subtitle">Browse reports by publication date</p>
-            <div class="archive-grid" id="archive-grid">
-                <!-- Archive will be populated by JavaScript -->
+            <div class="archive-controls">
+                <div class="archive-dropdown-group">
+                    <label class="archive-dropdown-label">Year</label>
+                    <select id="archive-year" class="archive-dropdown">
+                        <option value="">Select Year</option>
+                    </select>
+                </div>
+                <div class="archive-dropdown-group">
+                    <label class="archive-dropdown-label">Month</label>
+                    <select id="archive-month" class="archive-dropdown" disabled>
+                        <option value="">Select Month</option>
+                    </select>
+                </div>
+            </div>
+            <div class="archive-actions">
+                <button class="archive-btn archive-btn-primary" onclick="filterByArchiveSelection()">View Reports</button>
+                <button class="archive-btn archive-btn-secondary" onclick="clearArchiveFilter()">Show All Reports</button>
             </div>
         </div>
     </div>
@@ -857,9 +896,10 @@
             }).join('');
         }
 
-        // NEW: Generate archive section
+        // NEW: Generate archive section with dropdowns
         function generateArchive() {
-            const archiveGrid = document.getElementById('archive-grid');
+            const yearDropdown = document.getElementById('archive-year');
+            const monthDropdown = document.getElementById('archive-month');
             
             // Group reports by year and month
             const archiveData = {};
@@ -867,60 +907,88 @@
             allReports.forEach(report => {
                 const date = new Date(report.date);
                 const year = date.getFullYear();
-                const month = date.toLocaleDateString('en-US', { month: 'long' });
+                const month = date.getMonth(); // 0-11
+                const monthName = date.toLocaleDateString('en-US', { month: 'long' });
                 
                 if (!archiveData[year]) {
                     archiveData[year] = {};
                 }
                 
                 if (!archiveData[year][month]) {
-                    archiveData[year][month] = 0;
+                    archiveData[year][month] = {
+                        name: monthName,
+                        count: 0
+                    };
                 }
                 
-                archiveData[year][month]++;
+                archiveData[year][month].count++;
             });
             
-            // Generate archive HTML
+            // Populate year dropdown
             const years = Object.keys(archiveData).sort((a, b) => b - a);
+            yearDropdown.innerHTML = '<option value="">Select Year</option>';
             
-            archiveGrid.innerHTML = years.map(year => {
-                const monthsHtml = Object.keys(archiveData[year])
-                    .sort((a, b) => {
-                        const monthA = new Date(`${a} 1, ${year}`);
-                        const monthB = new Date(`${b} 1, ${year}`);
-                        return monthB - monthA;
-                    })
-                    .map(month => {
-                        const count = archiveData[year][month];
-                        return `
-                            <div class="archive-month" onclick="filterByDate('${year}', '${month}')">
-                                <span class="archive-month-name">${month}</span>
-                                <span class="archive-month-count">${count} report${count !== 1 ? 's' : ''}</span>
-                            </div>
-                        `;
-                    }).join('');
+            years.forEach(year => {
+                const totalReports = Object.values(archiveData[year]).reduce((sum, month) => sum + month.count, 0);
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = `${year} (${totalReports} reports)`;
+                yearDropdown.appendChild(option);
+            });
+            
+            // Handle year selection
+            yearDropdown.addEventListener('change', function() {
+                const selectedYear = this.value;
+                monthDropdown.innerHTML = '<option value="">Select Month</option>';
                 
-                const yearTotal = Object.values(archiveData[year]).reduce((sum, count) => sum + count, 0);
-                
-                return `
-                    <div class="archive-year">
-                        <h3 class="archive-year-title">${year} <span style="font-size: 0.8em; color: #6b7280;">(${yearTotal} reports)</span></h3>
-                        <div>
-                            ${monthsHtml}
-                        </div>
-                    </div>
-                `;
-            }).join('');
+                if (selectedYear && archiveData[selectedYear]) {
+                    monthDropdown.disabled = false;
+                    
+                    // Get months for selected year, sorted chronologically (newest first)
+                    const months = Object.keys(archiveData[selectedYear])
+                        .map(monthIndex => ({
+                            index: monthIndex,
+                            name: archiveData[selectedYear][monthIndex].name,
+                            count: archiveData[selectedYear][monthIndex].count
+                        }))
+                        .sort((a, b) => b.index - a.index);
+                    
+                    months.forEach(month => {
+                        const option = document.createElement('option');
+                        option.value = month.index;
+                        option.textContent = `${month.name} (${month.count} reports)`;
+                        monthDropdown.appendChild(option);
+                    });
+                } else {
+                    monthDropdown.disabled = true;
+                }
+            });
         }
 
-        // NEW: Filter by specific date
-        function filterByDate(year, month) {
-            const filteredReports = allReports.filter(report => {
+        // NEW: Filter by archive selection
+        function filterByArchiveSelection() {
+            const selectedYear = document.getElementById('archive-year').value;
+            const selectedMonth = document.getElementById('archive-month').value;
+            
+            if (!selectedYear) {
+                alert('Please select a year first.');
+                return;
+            }
+            
+            let filteredReports = allReports.filter(report => {
                 const date = new Date(report.date);
                 const reportYear = date.getFullYear();
-                const reportMonth = date.toLocaleDateString('en-US', { month: 'long' });
-                return reportYear == year && reportMonth === month;
+                return reportYear == selectedYear;
             });
+            
+            // If month is selected, filter by month too
+            if (selectedMonth) {
+                filteredReports = filteredReports.filter(report => {
+                    const date = new Date(report.date);
+                    const reportMonth = date.getMonth();
+                    return reportMonth == selectedMonth;
+                });
+            }
             
             // Show filtered reports and hide load more
             displayedReports = filteredReports;
@@ -932,8 +1000,40 @@
             
             // Show filter info
             const searchStats = document.getElementById('search-stats');
-            searchStats.innerHTML = `Showing ${filteredReports.length} report${filteredReports.length !== 1 ? 's' : ''} from ${month} ${year}`;
+            const year = selectedYear;
+            const monthName = selectedMonth ? 
+                new Date(selectedYear, selectedMonth).toLocaleDateString('en-US', { month: 'long' }) : '';
+            
+            const periodText = monthName ? `${monthName} ${year}` : year;
+            searchStats.innerHTML = `Showing ${filteredReports.length} report${filteredReports.length !== 1 ? 's' : ''} from ${periodText}`;
             searchStats.style.display = 'block';
+        }
+
+        // NEW: Clear archive filter
+        function clearArchiveFilter() {
+            // Reset dropdowns
+            document.getElementById('archive-year').value = '';
+            document.getElementById('archive-month').value = '';
+            document.getElementById('archive-month').disabled = true;
+            
+            // Reset to initial state
+            displayedReports = allReports.slice(0, reportsPerPage);
+            displayReports(displayedReports);
+            updateLoadMoreButton();
+            
+            // Hide search stats
+            document.getElementById('search-stats').style.display = 'none';
+            
+            // Reset filter tabs
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.dataset.category === 'all') {
+                    tab.classList.add('active');
+                }
+            });
+            
+            // Scroll to reports section
+            document.getElementById('reports-grid').scrollIntoView({ behavior: 'smooth' });
         }
 
         // Function to setup filtering (MODIFIED to work with pagination)
