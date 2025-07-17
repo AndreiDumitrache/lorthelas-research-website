@@ -520,21 +520,13 @@
                 const contentResponse = await fetch(file.download_url);
                 const content = await contentResponse.text();
                 
-                // Parse frontmatter and content
+                // ENHANCED: Parse frontmatter with multiline support
                 const parts = content.split('---');
                 if (parts.length >= 3) {
                     const frontmatter = parts[1];
                     const body = parts.slice(2).join('---').trim();
                     
-                    const report = {};
-                    frontmatter.split('\n').forEach(line => {
-                        const [key, ...value] = line.split(':');
-                        if (key && value.length) {
-                            let val = value.join(':').trim();
-                            val = val.replace(/^["']|["']$/g, '');
-                            report[key.trim()] = val;
-                        }
-                    });
+                    const report = parseYamlFrontmatter(frontmatter);
                     
                     // Update page title
                     document.title = `${report.title || 'Report'} | Lorthelas Research`;
@@ -552,6 +544,72 @@
             }
         }
 
+        // NEW: Enhanced YAML parser that handles multiline content (same as reports.html)
+        function parseYamlFrontmatter(yamlText) {
+            const report = {};
+            const lines = yamlText.split('\n').map(line => line.replace(/\r$/, ''));
+            
+            let i = 0;
+            while (i < lines.length) {
+                const line = lines[i].trim();
+                
+                if (!line || line.startsWith('#')) {
+                    i++;
+                    continue;
+                }
+                
+                const colonIndex = line.indexOf(':');
+                if (colonIndex === -1) {
+                    i++;
+                    continue;
+                }
+                
+                const key = line.substring(0, colonIndex).trim();
+                let value = line.substring(colonIndex + 1).trim();
+                
+                // Check for multiline values (|, >, >-, |-)
+                if (value === '|' || value === '>' || value === '>-' || value === '|-' || value === '') {
+                    // This is a multiline field, collect the following indented lines
+                    const multilineContent = [];
+                    i++; // Move to next line
+                    
+                    while (i < lines.length) {
+                        const nextLine = lines[i];
+                        
+                        // If line starts with spaces and is not a new key, it's part of multiline content
+                        if (nextLine.startsWith('  ') || nextLine.startsWith('\t') || (nextLine.trim() === '' && i < lines.length - 1)) {
+                            multilineContent.push(nextLine.replace(/^  /, '').replace(/^\t/, ''));
+                            i++;
+                        } else if (nextLine.trim() === '') {
+                            // Empty line in multiline content
+                            multilineContent.push('');
+                            i++;
+                        } else if (nextLine.includes(':') && !nextLine.startsWith('  ')) {
+                            // This is a new key, stop collecting multiline content
+                            break;
+                        } else {
+                            // Continuation of multiline content
+                            multilineContent.push(nextLine.trim());
+                            i++;
+                        }
+                    }
+                    
+                    // Join the multiline content
+                    value = multilineContent.join(' ').trim();
+                    
+                } else {
+                    // Single line value, remove quotes
+                    value = value.replace(/^["']|["']$/g, '');
+                    i++;
+                }
+                
+                report[key] = value;
+                console.log(`Parsed ${key}:`, value.substring(0, 100) + (value.length > 100 ? '...' : ''));
+            }
+            
+            return report;
+        }
+
         // Function to display the report
         function displayReport(report, content) {
             document.getElementById('loading').style.display = 'none';
@@ -565,11 +623,26 @@
                 day: 'numeric'
             });
             
+            // ENHANCED: Process summary properly
+            let summary = report.summary || 'No summary available.';
+            
+            // Clean up any remaining markdown or YAML artifacts
+            summary = summary.replace(/^[>|][-+]?\s*/, ''); // Remove YAML indicators
+            summary = summary.replace(/\n+/g, ' '); // Replace line breaks with spaces
+            summary = summary.trim();
+            
+            // If summary is still empty or just whitespace
+            if (!summary || summary.length < 3) {
+                summary = 'No summary available.';
+            }
+            
+            console.log(`Report summary processed: "${summary}" (${summary.length} chars)`);
+            
             // Update elements
             document.getElementById('report-date').textContent = date;
             document.getElementById('report-category').textContent = report.category || 'Uncategorized';
             document.getElementById('report-title').textContent = report.title || 'Untitled Report';
-            document.getElementById('report-summary').textContent = report.summary || 'No summary available.';
+            document.getElementById('report-summary').textContent = summary;
             
             // Convert markdown to HTML (enhanced with image support)
             const htmlContent = convertMarkdownToHTML(content);
