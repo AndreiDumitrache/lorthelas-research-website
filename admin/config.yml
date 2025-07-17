@@ -14,11 +14,11 @@ collections:
       - {label: "Date", name: "date", widget: "datetime"}
       - {label: "Category", name: "category", widget: "select", options: ["Macroeconomic", "Political Economy", "Portfolio Strategy", "Market Analysis", "Geopolitical"]}
       - name: "summary"
-  label: "Summary"
-  widget: "textarea"
-  required: false
-  hint: "Write as much as you need"
-  rows: 4
+        label: "Summary"
+        widget: "markdown"
+        required: false
+        minimal: true
+        hint: "Write detailed summary - unlimited length"
       - {label: "Content", name: "body", widget: "markdown"}
       - {label: "PDF File", name: "pdf", widget: "file", required: false}
   - name: "portfolio"
