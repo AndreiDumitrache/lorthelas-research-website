@@ -19,12 +19,55 @@
     border-radius: 12px;
     padding: 2rem;
     box-shadow: 0 4px 15px rgba(107, 114, 128, 0.1);
+    position: relative;
 }
 
 #allocation-chart {
     width: 100% !important;
     height: auto !important;
-    max-height: 300px;
+    max-height: 400px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+/* NEW: Professional chart enhancements */
+.chart-tooltip {
+    position: absolute;
+    background: rgba(55, 65, 81, 0.95);
+    color: white;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chart-center-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none;
+    font-weight: 600;
+    color: #374151;
+}
+
+.chart-center-title {
+    font-size: 0.9rem;
+    color: #6b7280;
+    margin-bottom: 0.25rem;
+}
+
+.chart-center-value {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #374151;
 }
         * {
             margin: 0;
@@ -637,8 +680,13 @@
                 <div class="allocation-chart">
                     <h3 class="chart-title">Strategic Asset Allocation</h3>
                     <div class="chart-container">
-    <canvas id="allocation-chart" width="400" height="300"></canvas>
-</div>
+                        <canvas id="allocation-chart" width="400" height="400"></canvas>
+                        <div class="chart-tooltip" id="chart-tooltip"></div>
+                        <div class="chart-center-label" id="chart-center-label">
+                            <div class="chart-center-title">Total Assets</div>
+                            <div class="chart-center-value">100%</div>
+                        </div>
+                    </div>
                     <div class="allocation-legend">
                         <div class="legend-item">
                             <div class="legend-color" style="background: #374151;"></div>
@@ -777,13 +825,14 @@ async function loadPortfolioData() {
         } else {
             // Create default chart if no CMS data found
             console.log('No allocation data from CMS, creating default chart');
-            createAllocationChart();
+            createProfessionalAllocationChart();
         }
         
         console.log('Portfolio metrics updated successfully!');
         
     } catch (error) {
         console.error('Error loading portfolio data:', error);
+        createProfessionalAllocationChart(); // Fallback to default chart
     }
 }
 
@@ -823,7 +872,8 @@ function updateMetricByLabel(labelText, newValue) {
         }
     });
 }
-        // Simple allocation extraction function
+
+// Simple allocation extraction function
 function extractAllocationData(content) {
     const allocationData = [];
     
@@ -884,7 +934,6 @@ function extractAllocationData(content) {
 }
 
 // Update allocation legend
-// Update allocation legend
 function updateAllocationLegend(allocation) {
     const legend = document.querySelector('.allocation-legend');
     if (!legend) {
@@ -903,26 +952,29 @@ function updateAllocationLegend(allocation) {
     `).join('');
     
     // Update the chart too
-    createAllocationChart(allocation);
+    createProfessionalAllocationChart(allocation);
 }
-        // Create pie chart for allocation
-function createAllocationChart(allocationData) {
+
+// ENHANCED: Create professional pie chart with animations and interactions
+function createProfessionalAllocationChart(allocationData) {
     const canvas = document.getElementById('allocation-chart');
+    const tooltip = document.getElementById('chart-tooltip');
+    const centerLabel = document.getElementById('chart-center-label');
+    
     if (!canvas) {
         console.log('Chart canvas not found');
         return;
     }
     
     const ctx = canvas.getContext('2d');
+    const rect = canvas.getBoundingClientRect();
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
-    const radius = Math.min(centerX, centerY) - 20;
+    const outerRadius = Math.min(centerX, centerY) - 40;
+    const innerRadius = outerRadius * 0.4; // Donut chart
     
-    // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
+    // Default data if none provided
     if (!allocationData || allocationData.length === 0) {
-        // Show default/placeholder chart
         allocationData = [
             {asset: 'Equities', percentage: 45, color: '#374151'},
             {asset: 'Fixed Income', percentage: 30, color: '#6b7280'},
@@ -932,47 +984,204 @@ function createAllocationChart(allocationData) {
         ];
     }
     
-    let currentAngle = -Math.PI / 2; // Start at top
+    let currentHoverSegment = -1;
+    let animationProgress = 0;
+    let isAnimating = true;
     
-    allocationData.forEach(item => {
-        const sliceAngle = (item.percentage / 100) * 2 * Math.PI;
+    // Animation variables
+    const animationDuration = 1500; // milliseconds
+    let startTime = Date.now();
+    
+    function animate() {
+        const elapsed = Date.now() - startTime;
+        animationProgress = Math.min(elapsed / animationDuration, 1);
         
-        // Draw slice
-        ctx.beginPath();
-        ctx.moveTo(centerX, centerY);
-        ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + sliceAngle);
-        ctx.closePath();
-        ctx.fillStyle = item.color || '#374151';
-        ctx.fill();
+        // Ease-out animation
+        const easedProgress = 1 - Math.pow(1 - animationProgress, 3);
         
-        // Draw border
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 2;
-        ctx.stroke();
+        drawChart(easedProgress);
         
-        // Draw percentage labels
-        const labelAngle = currentAngle + sliceAngle / 2;
-        const labelX = centerX + Math.cos(labelAngle) * (radius * 0.7);
-        const labelY = centerY + Math.sin(labelAngle) * (radius * 0.7);
+        if (animationProgress < 1) {
+            requestAnimationFrame(animate);
+        } else {
+            isAnimating = false;
+        }
+    }
+    
+    function drawChart(progress = 1) {
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 14px Inter, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
+        let currentAngle = -Math.PI / 2; // Start at top
         
-        // Add shadow for better readability
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-        ctx.shadowBlur = 2;
-        ctx.fillText(`${item.percentage}%`, labelX, labelY);
+        allocationData.forEach((item, index) => {
+            const sliceAngle = (item.percentage / 100) * 2 * Math.PI * progress;
+            const isHovered = index === currentHoverSegment;
+            const radiusOffset = isHovered ? 10 : 0;
+            const currentOuterRadius = outerRadius + radiusOffset;
+            
+            // Draw slice
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, innerRadius, currentAngle, currentAngle + sliceAngle);
+            ctx.arc(centerX, centerY, currentOuterRadius, currentAngle + sliceAngle, currentAngle, true);
+            ctx.closePath();
+            
+            // Gradient fill
+            const gradient = ctx.createRadialGradient(centerX, centerY, innerRadius, centerX, centerY, currentOuterRadius);
+            gradient.addColorStop(0, item.color);
+            gradient.addColorStop(1, adjustBrightness(item.color, isHovered ? 20 : 0));
+            
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            
+            // Subtle border
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            
+            // Shadow for depth
+            if (isHovered) {
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+                ctx.shadowBlur = 10;
+                ctx.shadowOffsetX = 2;
+                ctx.shadowOffsetY = 2;
+            }
+            
+            // Draw percentage labels (only when animation is complete)
+            if (progress > 0.8 && item.percentage >= 5) { // Only show labels for segments >= 5%
+                const labelAngle = currentAngle + sliceAngle / 2;
+                const labelRadius = (innerRadius + currentOuterRadius) / 2;
+                const labelX = centerX + Math.cos(labelAngle) * labelRadius;
+                const labelY = centerY + Math.sin(labelAngle) * labelRadius;
+                
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 14px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                
+                // Text shadow for better readability
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+                ctx.shadowBlur = 3;
+                ctx.fillText(`${item.percentage}%`, labelX, labelY);
+            }
+            
+            // Reset shadow
+            ctx.shadowColor = 'transparent';
+            ctx.shadowBlur = 0;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
+            
+            currentAngle += sliceAngle;
+        });
+    }
+    
+    // Mouse move handler for hover effects
+    canvas.addEventListener('mousemove', function(e) {
+        if (isAnimating) return;
         
-        // Reset shadow
-        ctx.shadowBlur = 0;
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
         
-        currentAngle += sliceAngle;
+        // Scale to canvas coordinates
+        const canvasX = (x / rect.width) * canvas.width;
+        const canvasY = (y / rect.height) * canvas.height;
+        
+        const dx = canvasX - centerX;
+        const dy = canvasY - centerY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance >= innerRadius && distance <= outerRadius + 10) {
+            let angle = Math.atan2(dy, dx) + Math.PI / 2;
+            if (angle < 0) angle += 2 * Math.PI;
+            
+            let currentAngle = 0;
+            let hoveredSegment = -1;
+            
+            for (let i = 0; i < allocationData.length; i++) {
+                const sliceAngle = (allocationData[i].percentage / 100) * 2 * Math.PI;
+                if (angle >= currentAngle && angle <= currentAngle + sliceAngle) {
+                    hoveredSegment = i;
+                    break;
+                }
+                currentAngle += sliceAngle;
+            }
+            
+            if (hoveredSegment !== currentHoverSegment) {
+                currentHoverSegment = hoveredSegment;
+                drawChart();
+                
+                if (hoveredSegment >= 0) {
+                    showTooltip(e, allocationData[hoveredSegment]);
+                    updateCenterLabel(allocationData[hoveredSegment]);
+                    canvas.style.cursor = 'pointer';
+                }
+            }
+        } else {
+            if (currentHoverSegment !== -1) {
+                currentHoverSegment = -1;
+                drawChart();
+                hideTooltip();
+                resetCenterLabel();
+                canvas.style.cursor = 'default';
+            }
+        }
     });
     
-    console.log('Allocation chart updated with', allocationData.length, 'segments');
+    // Mouse leave handler
+    canvas.addEventListener('mouseleave', function() {
+        currentHoverSegment = -1;
+        drawChart();
+        hideTooltip();
+        resetCenterLabel();
+        canvas.style.cursor = 'default';
+    });
+    
+    function showTooltip(e, item) {
+        tooltip.innerHTML = `
+            <strong>${item.asset}</strong><br>
+            ${item.percentage}% of portfolio
+        `;
+        tooltip.style.left = e.pageX + 10 + 'px';
+        tooltip.style.top = e.pageY - 10 + 'px';
+        tooltip.style.opacity = '1';
+    }
+    
+    function hideTooltip() {
+        tooltip.style.opacity = '0';
+    }
+    
+    function updateCenterLabel(item) {
+        centerLabel.innerHTML = `
+            <div class="chart-center-title">${item.asset}</div>
+            <div class="chart-center-value">${item.percentage}%</div>
+        `;
+    }
+    
+    function resetCenterLabel() {
+        centerLabel.innerHTML = `
+            <div class="chart-center-title">Total Assets</div>
+            <div class="chart-center-value">100%</div>
+        `;
+    }
+    
+    function adjustBrightness(color, percent) {
+        // Simple brightness adjustment for hover effect
+        const num = parseInt(color.replace("#", ""), 16);
+        const amt = Math.round(2.55 * percent);
+        const R = (num >> 16) + amt;
+        const G = (num >> 8 & 0x00FF) + amt;
+        const B = (num & 0x0000FF) + amt;
+        return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+            (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+            (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+    }
+    
+    // Start animation
+    animate();
+    
+    console.log('Professional allocation chart created with', allocationData.length, 'segments');
 }
     </script>
 </body>
-</html>
+</html>)
