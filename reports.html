@@ -648,6 +648,11 @@ async function loadReports() {
                             }
                             
                             report[key.trim()] = val;
+
+// Debug summary parsing
+if (key.trim() === 'summary') {
+    console.log('Summary parsed:', val, 'Length:', val.length);
+}
                         }
                     });
                     
