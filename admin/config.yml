@@ -17,9 +17,8 @@ collections:
   label: "Summary"
   widget: "textarea"
   required: false
-  hint: "Write detailed summary - no character limit"
-  default: ""
-  pattern: ['^[\s\S]*$', 'Any text allowed']
+  hint: "Write as much as you need"
+  rows: 4
       - {label: "Content", name: "body", widget: "markdown"}
       - {label: "PDF File", name: "pdf", widget: "file", required: false}
   - name: "portfolio"
