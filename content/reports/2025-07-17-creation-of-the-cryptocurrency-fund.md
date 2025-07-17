@@ -1,12 +1,14 @@
 ---
-title: Creation of the cryptocurrency fund
+title: Portfolio diversification - cryptocurrency fund
 date: 2025-07-17T10:36:38.119Z
 category: Portfolio Strategy
-summary: summary
+summary: Creation of the cryptocurrency fund
 pdf: /images/lorthelas-research-cryptocurrency-fund.pdf
 ---
 With an ever increasing relevancy in today’s financial space, the cryptocurrency industry is attracting more and more investors to a risky platform of trading, leaving behind important aspects of traditional
 investment methods. 
+
+![](/images/image_2025-07-17_134557347.png)
 
 Our aim is to provide a clear, concise and accurate prediction to a constantly evolving market through the use of fundamental analysis, technical interpretation and an expanding array of financial indicators. We strive to provide
 accurate market analysis by combining traditional market indicators with novel market predictors. 
