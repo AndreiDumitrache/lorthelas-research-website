@@ -11,13 +11,11 @@ summary: >-
   which have shown great capabilities in the past decade and a half.
 pdf: /images/lorthelas-research-cryptocurrency-fund.pdf
 ---
-With an ever increasing relevancy in today’s financial space, the cryptocurrency industry is attracting more and more investors to a risky platform of trading, leaving behind important aspects of traditional
-investment methods. 
+With an ever increasing relevancy in today’s financial space, the cryptocurrency industry is attracting more and more investors to a risky platform of trading, leaving behind important aspects of traditional investment methods.
 
 ![](/images/image_2025-07-17_134557347.png)
 
-Our aim is to provide a clear, concise and accurate prediction to a constantly evolving market through the use of fundamental analysis, technical interpretation and an expanding array of financial indicators. We strive to provide
-accurate market analysis by combining traditional market indicators with novel market predictors. 
+Our aim is to provide a clear, concise and accurate prediction to a constantly evolving market through the use of fundamental analysis, technical interpretation and an expanding array of financial indicators. We strive to provide accurate market analysis by combining traditional market indicators with novel market predictors.
 
 The cryptocurrency industry is still in its infancy and institutions around the world (both public and private) are yet to observe its capabilities. While we have seen large players like political actors and investment banks make significant moves in this space, there is still a sentiment of fear and detachment among traditional investors. This is the reason why we want to be positioned early, preferably before large private companies and pensions funds invest publicly in risk assets.
 
