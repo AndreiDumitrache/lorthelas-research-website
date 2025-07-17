@@ -628,7 +628,7 @@ async function loadReports() {
                     const frontmatter = parts[1];
                     const body = parts.slice(2).join('---').trim();
                     
-                    const report = {};
+const report = {};
 frontmatter.split('\n').forEach(line => {
     const [key, ...value] = line.split(':');
     if (key && value.length) {
