@@ -628,28 +628,28 @@ async function loadReports() {
                     const frontmatter = parts[1];
                     const body = parts.slice(2).join('---').trim();
                     
-const report = {};
-frontmatter.split('\n').forEach(line => {
-    const [key, ...value] = line.split(':');
-    if (key && value.length) {
-        let val = value.join(':').trim();
-        // Remove quotes
-        val = val.replace(/^["']|["']$/g, '');
-        
-        // Handle categories array
-        if (key.trim() === 'categories') {
-            try {
-                if (val.startsWith('[') && val.endsWith(']')) {
-                    val = val.slice(1, -1).split(',').map(item => item.trim().replace(/['"]/g, ''));
-                }
-            } catch (e) {
-                console.log('Categories parsing error:', e);
-            }
-        }
-        
-        report[key.trim()] = val;
-    }
-});
+                    const report = {};
+                    frontmatter.split('\n').forEach(line => {
+                        const [key, ...value] = line.split(':');
+                        if (key && value.length) {
+                            let val = value.join(':').trim();
+                            // Remove quotes
+                            val = val.replace(/^["']|["']$/g, '');
+                            
+                            // Handle categories array
+                            if (key.trim() === 'categories') {
+                                try {
+                                    if (val.startsWith('[') && val.endsWith(']')) {
+                                        val = val.slice(1, -1).split(',').map(item => item.trim().replace(/['"]/g, ''));
+                                    }
+                                } catch (e) {
+                                    console.log('Categories parsing error:', e);
+                                }
+                            }
+                            
+                            report[key.trim()] = val;
+                        }
+                    });
                     
                     report.body = body;
                     report.filename = file.name;
@@ -847,17 +847,6 @@ function copyReportLink(filename) {
 
 // Load reports when page loads
 document.addEventListener('DOMContentLoaded', loadReports);
-/* FORCE FULL SUMMARY DISPLAY */
-.report-summary {
-    max-height: none !important;
-    overflow: visible !important;
-    text-overflow: initial !important;
-    white-space: normal !important;
-    -webkit-line-clamp: none !important;
-    display: block !important;
-    height: auto !important;
-    word-wrap: break-word !important;
-}
-    </script>
+</script>
 </body>
 </html>
