@@ -13,7 +13,7 @@ collections:
       - {label: "Title", name: "title", widget: "string"}
       - {label: "Date", name: "date", widget: "datetime"}
       - {label: "Category", name: "category", widget: "select", options: ["Macroeconomic", "Political Economy", "Portfolio Strategy", "Market Analysis", "Geopolitical"]}
-      - {label: "Summary", name: "summary", widget: "textarea", hint: "Detailed summary of the report"}
+      - {label: "Summary", name: "summary", widget: "text", hint: "Brief summary of the report"}
       - {label: "Content", name: "body", widget: "markdown"}
       - {label: "PDF File", name: "pdf", widget: "file", required: false}
 
