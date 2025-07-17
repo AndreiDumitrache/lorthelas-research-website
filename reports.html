@@ -847,6 +847,17 @@ function copyReportLink(filename) {
 
 // Load reports when page loads
 document.addEventListener('DOMContentLoaded', loadReports);
-</script>
+/* FORCE FULL SUMMARY DISPLAY */
+.report-summary {
+    max-height: none !important;
+    overflow: visible !important;
+    text-overflow: initial !important;
+    white-space: normal !important;
+    -webkit-line-clamp: none !important;
+    display: block !important;
+    height: auto !important;
+    word-wrap: break-word !important;
+}
+    </script>
 </body>
 </html>
