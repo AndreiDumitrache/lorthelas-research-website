@@ -631,8 +631,17 @@ async function loadReports() {
                     const report = {};
                     frontmatter.split('\n').forEach(line => {
                         const [key, ...value] = line.split(':');
-                        if (key && value.length) {
-                            let val = value.join(':').trim();
+if (key && value.length) {
+    let val = value.join(':').trim();
+    
+    // Handle potential line length limits
+    if (key.trim() === 'summary' && val.length > 0) {
+        console.log('Found summary, original length:', val.length);
+        // Ensure we get the full line without any truncation
+        const fullLine = line.substring(line.indexOf(':') + 1).trim();
+        val = fullLine.replace(/^["']|["']$/g, '');
+        console.log('Full summary after processing:', val.length);
+    }
                             // Remove quotes
                             val = val.replace(/^["']|["']$/g, '');
                             
