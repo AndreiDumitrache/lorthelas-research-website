@@ -629,27 +629,61 @@ async function loadReports() {
                     const body = parts.slice(2).join('---').trim();
                     
                     const report = {};
-                    frontmatter.split('\n').forEach(line => {
-                        const [key, ...value] = line.split(':');
-                        if (key && value.length) {
-                            let val = value.join(':').trim();
-                            // Remove quotes
-                            val = val.replace(/^["']|["']$/g, '');
-                            
-                            // Handle categories array
-                            if (key.trim() === 'categories') {
-                                try {
-                                    if (val.startsWith('[') && val.endsWith(']')) {
-                                        val = val.slice(1, -1).split(',').map(item => item.trim().replace(/['"]/g, ''));
-                                    }
-                                } catch (e) {
-                                    console.log('Categories parsing error:', e);
-                                }
-                            }
-                            
-                            report[key.trim()] = val;
-                        }
-                    });
+
+// Enhanced YAML parsing to handle multiline summaries
+const lines = frontmatter.split('\n');
+let currentKey = null;
+let multilineValue = '';
+let isMultiline = false;
+
+lines.forEach(line => {
+    const trimmedLine = line.trim();
+    
+    if (trimmedLine.includes(':') && !isMultiline) {
+        // Save previous multiline value
+        if (currentKey && isMultiline) {
+            report[currentKey] = multilineValue.trim();
+            isMultiline = false;
+            multilineValue = '';
+        }
+        
+        const [key, ...value] = trimmedLine.split(':');
+        const val = value.join(':').trim();
+        
+        if (val === '' || val === '>' || val === '>-' || val === '|-') {
+            // This is a multiline field
+            currentKey = key.trim();
+            isMultiline = true;
+            multilineValue = '';
+        } else {
+            // Regular single-line field
+            let processedVal = val.replace(/^["']|["']$/g, '');
+            
+            // Handle categories array
+            if (key.trim() === 'categories') {
+                try {
+                    if (processedVal.startsWith('[') && processedVal.endsWith(']')) {
+                        processedVal = processedVal.slice(1, -1).split(',').map(item => item.trim().replace(/['"]/g, ''));
+                    }
+                } catch (e) {
+                    console.log('Categories parsing error:', e);
+                }
+            }
+            
+            report[key.trim()] = processedVal;
+        }
+    } else if (isMultiline && trimmedLine) {
+        // Collecting multiline content
+        multilineValue += (multilineValue ? ' ' : '') + trimmedLine;
+    }
+});
+
+// Save any remaining multiline value
+if (currentKey && isMultiline && multilineValue) {
+    report[currentKey] = multilineValue.trim();
+}
+
+console.log('Parsed summary for', report.title, ':', report.summary, 'Length:', report.summary ? report.summary.length : 0);
                     
                     report.body = body;
                     report.filename = file.name;
