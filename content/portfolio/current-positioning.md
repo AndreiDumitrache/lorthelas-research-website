@@ -7,18 +7,12 @@ allocation:
   - asset: Equities
     percentage: 59
     color: "#374151"
-  - asset: Fixed Income
-    percentage: 0
-    color: "#6b7280"
   - asset: Commodities
     percentage: 6
     color: "#9ca3af"
   - asset: Alternatives
     percentage: 35
     color: "#d1d5db"
-  - asset: Cash
-    percentage: 0
-    color: "#f3f4f6"
 metrics:
   annual_return: 7.55%
   sharpe_ratio: "1.156"
