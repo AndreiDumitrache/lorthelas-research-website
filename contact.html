@@ -532,6 +532,19 @@
             border: 5px solid transparent;
             border-top-color: #374151;
         }
+
+        /* Email protection styles */
+        .protected-email {
+            color: #374151;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            border-bottom: 1px dotted #374151;
+        }
+
+        .protected-email:hover {
+            color: #1f2937;
+        }
     </style>
     <!-- Favicon and Icons -->
 <link rel="icon" type="image/png" href="/favicon.png">
@@ -652,7 +665,7 @@
                         <h3 class="contact-title">Send us a Message</h3>
                         <p style="color: #6b7280; margin-bottom: 2rem; text-align: center;">
                             Fill out the form below with your inquiry, or you can send us an email directly at 
-                            <a href="#" style="color: #374151; font-weight: 600; text-decoration: none;">research@lorthelas.com</a>
+                            <span class="protected-email" onclick="sendEmail()">research at lorthelas dot com</span>
                         </p>
 
                         <!-- Form Messages -->
@@ -720,6 +733,13 @@
 
 
 <script>
+// Protected email function
+function sendEmail() {
+    const user = 'research';
+    const domain = 'lorthelas.com';
+    window.location.href = 'mailto:' + user + '@' + domain;
+}
+
 // Form submission handling with clear notification
 document.getElementById('contact-form').addEventListener('submit', function(e) {
     const submitBtn = document.getElementById('submit-btn');
@@ -805,7 +825,8 @@ const enhancedSuccessStyle = `
 const styleSheet = document.createElement('style');
 styleSheet.textContent = enhancedSuccessStyle;
 document.head.appendChild(styleSheet);
-    // Reveal contact hero image on scroll
+
+// Reveal contact hero image on scroll
 function revealContactImage() {
     const heroImage = document.querySelector('.contact-hero-image');
     if (heroImage) {
@@ -837,11 +858,6 @@ document.addEventListener('DOMContentLoaded', function() {
 // Keep scroll listener
 window.addEventListener('scroll', revealContactImage);
 window.addEventListener('load', revealContactImage);
-function sendEmail() {
-    const user = 'research';
-    const domain = 'lorthelas.com';
-    window.location.href = 'mailto:' + user + '@' + domain;
-}
 </script>
 </body>
 </html>
