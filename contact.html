@@ -305,6 +305,46 @@
             transform: none;
         }
 
+        /* Email Button Styles */
+        .email-button {
+            background: linear-gradient(45deg, #6b7280, #4b5563);
+            color: #ffffff;
+            padding: 0.6rem 1.5rem;
+            border: none;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .email-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
+            color: #ffffff;
+        }
+
+        .email-display {
+            display: none;
+            margin-top: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .email-display a {
+            color: #374151;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .email-display a:hover {
+            color: #1f2937;
+        }
+
         /* Success/Error Messages */
         .form-message {
             padding: 1rem;
@@ -651,8 +691,11 @@
                     <div class="contact-form">
                         <h3 class="contact-title">Send us a Message</h3>
                         <p style="color: #6b7280; margin-bottom: 2rem; text-align: center;">
-                            Fill out the form below with your inquiry, or you can send us an email directly at 
-                            <a href="#" onclick="sendEmail()" style="color: #374151; font-weight: 600; text-decoration: none;">research@lorthelas.com</a>
+                            Fill out the form below with your inquiry, or you can email us directly: 
+                            <button class="email-button" id="email-btn">Show Email Address</button>
+                            <div class="email-display" id="email-display">
+                                <a href="#" onclick="sendEmail()">research@lorthelas.com</a>
+                            </div>
                         </p>
 
                         <!-- Form Messages -->
@@ -720,6 +763,25 @@
 
 
 <script>
+// Show email address function
+function showEmail() {
+    const emailDisplay = document.getElementById('email-display');
+    const emailBtn = document.getElementById('email-btn');
+    
+    if (emailDisplay.style.display === 'block') {
+        emailDisplay.style.display = 'none';
+        emailBtn.textContent = 'Show Email Address';
+    } else {
+        emailDisplay.style.display = 'block';
+        emailBtn.textContent = 'Hide Email Address';
+    }
+}
+
+// Add event listener for email button
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('email-btn').addEventListener('click', showEmail);
+});
+
 // Form submission handling with clear notification
 document.getElementById('contact-form').addEventListener('submit', function(e) {
     const submitBtn = document.getElementById('submit-btn');
@@ -805,7 +867,8 @@ const enhancedSuccessStyle = `
 const styleSheet = document.createElement('style');
 styleSheet.textContent = enhancedSuccessStyle;
 document.head.appendChild(styleSheet);
-    // Reveal contact hero image on scroll
+
+// Reveal contact hero image on scroll
 function revealContactImage() {
     const heroImage = document.querySelector('.contact-hero-image');
     if (heroImage) {
@@ -837,11 +900,9 @@ document.addEventListener('DOMContentLoaded', function() {
 // Keep scroll listener
 window.addEventListener('scroll', revealContactImage);
 window.addEventListener('load', revealContactImage);
+
 function sendEmail() {
     const user = 'research';
     const domain = 'lorthelas.com';
     window.location.href = 'mailto:' + user + '@' + domain;
 }
-</script>
-</body>
-</html>
