@@ -328,11 +328,12 @@
 
         .email-display {
             display: none;
-            margin-top: 0.5rem;
-            padding: 0.5rem 1rem;
+            margin-top: 1rem;
+            padding: 1rem;
             background: #f8fafc;
             border-radius: 8px;
             border: 1px solid #e5e7eb;
+            text-align: center;
         }
 
         .email-display a {
@@ -765,21 +766,49 @@
 <script>
 // Show email address function
 function showEmail() {
+    console.log('showEmail function called'); // Debug log
     const emailDisplay = document.getElementById('email-display');
     const emailBtn = document.getElementById('email-btn');
     
-    if (emailDisplay.style.display === 'block') {
-        emailDisplay.style.display = 'none';
-        emailBtn.textContent = 'Show Email Address';
+    if (emailDisplay && emailBtn) {
+        if (emailDisplay.style.display === 'block') {
+            emailDisplay.style.display = 'none';
+            emailBtn.textContent = 'Show Email Address';
+            console.log('Email hidden');
+        } else {
+            emailDisplay.style.display = 'block';
+            emailBtn.textContent = 'Hide Email Address';
+            console.log('Email shown');
+        }
     } else {
-        emailDisplay.style.display = 'block';
-        emailBtn.textContent = 'Hide Email Address';
+        console.error('Email elements not found');
     }
 }
 
 // Add event listener for email button
 document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('email-btn').addEventListener('click', showEmail);
+    const emailBtn = document.getElementById('email-btn');
+    const emailDisplay = document.getElementById('email-display');
+    
+    if (emailBtn && emailDisplay) {
+        emailBtn.addEventListener('click', showEmail);
+        
+        // Debug: Add console log to verify function is called
+        console.log('Email button event listener attached');
+    }
+    
+    // Immediate reveal (for when image is already in viewport)
+    const heroImage = document.querySelector('.contact-hero-image');
+    if (heroImage) {
+        // Check if image is in viewport immediately
+        const rect = heroImage.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+            heroImage.classList.add('revealed');
+        }
+    }
+    
+    // Also set up scroll listener
+    revealContactImage();
 });
 
 // Form submission handling with clear notification
