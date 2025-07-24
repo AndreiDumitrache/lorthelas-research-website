@@ -2,13 +2,9 @@
 title: The Russian Debt Trap
 date: 2025-07-18T11:25:13.692Z
 category: Geopolitical
-summary: >-
-  Through this cryptocurrency fund we would like to offer investors the
-  possibility of
-
-  engaging in novel industries and increase their profits and exposure to riskier assets
-
-  which have shown great capabilities in the past decade and a half.
+summary: Having shown a thriving economic and financial sectors not so long ago,
+  the Kremlin has observed a decrease in interest from external investors in the
+  past three years and is now faced with several economic hardships.
 pdf: /images/the-russian-debt-trap-lorthelas-research.pdf
 ---
 Since the beginning of the century the Russian economy has experienced significant growth and political changes. In the initial stages of the transition, the Russian Federation has even explored the probability of entering western markets at more efficient rates through deals and partnerships. Its initial policies were very lenient towards European countries and the US, showing a potential breakthrough in Russian politics for the first time since early 20th century.
