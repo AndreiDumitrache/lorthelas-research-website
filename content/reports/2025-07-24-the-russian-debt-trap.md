@@ -2,11 +2,15 @@
 title: The Russian Debt Trap
 date: 2025-07-18T11:25:13.692Z
 category: Geopolitical
-summary: Since the beginning of the century the Russian economy has experienced
-  significant growth and political changes. In the initial stages of the
-  transition, the Russian Federation has even explored the probability of
-  entering western markets at more efficient rates through deals and
-  partnerships.
+summary: >-
+  In this report we predict a decline in Russia’s economic power over the next
+  following
+
+  years, decline which could be exacerbated by the continuation of the conflict in the
+
+  region. Additionally, we believe that Russia’s close allies are rather interested in its
+
+  resources rather than mutual collaboration benefits. 
 pdf: /images/the-russian-debt-trap-lorthelas-research.pdf
 ---
 Since the beginning of the century the Russian economy has experienced significant growth and political changes. In the initial stages of the transition, the Russian Federation has even explored the probability of entering western markets at more efficient rates through deals and partnerships. Its initial policies were very lenient towards European countries and the US, showing a potential breakthrough in Russian politics for the first time since early 20th century.
