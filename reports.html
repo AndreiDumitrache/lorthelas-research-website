@@ -872,6 +872,7 @@
                         // Check if this is a new root-level key
                         if (currentLine.includes(':') && !currentLine.startsWith(' ') && !currentLine.startsWith('\t')) {
                             console.log(`🔑 Found new root key, stopping block at: "${currentLine}"`);
+                            // DON'T increment i here - we want to process this line as the next field
                             break;
                         }
                         
@@ -955,7 +956,20 @@
                 i++;
             }
             
+            console.log(`📋 Final report object keys: ${Object.keys(report).join(', ')}`);
             console.log(`📋 Final report object:`, report);
+            
+            // Ensure we don't lose any fields
+            if (!report.pdf && yamlText.includes('pdf:')) {
+                console.warn('⚠️ PDF field detected in YAML but not parsed!');
+                
+                // Emergency fallback - extract PDF field manually
+                const pdfMatch = yamlText.match(/pdf:\s*(.+)/);
+                if (pdfMatch) {
+                    report.pdf = pdfMatch[1].trim();
+                    console.log(`🚑 Emergency PDF extraction: "${report.pdf}"`);
+                }
+            }
             return report;
         }
 
