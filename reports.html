@@ -611,14 +611,14 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://lorthelas.com">
 <meta property="og:title" content="Lorthelas Research | Capital structuring & Investment strategy">
-<meta property="og:description" content="Comprehensive analysis of macroeconomic trends, political economy dynamics, and global conflicts impact on financial markets">
+<meta property="og:deion" content="Comprehensive analysis of macroeconomic trends, political economy dynamics, and global conflicts impact on financial markets">
 <meta property="og:image" content="https://lorthelas.com/favicon.png">
 
 <!-- Twitter -->
 <meta property="twitter:card" content="summary_large_image">
 <meta property="twitter:url" content="https://lorthelas.com">
 <meta property="twitter:title" content="Lorthelas Research | Capital structuring & Investment strategy">
-<meta property="twitter:description" content="Comprehensive analysis of macroeconomic trends, political economy dynamics, and global conflicts impact on financial markets">
+<meta property="twitter:deion" content="Comprehensive analysis of macroeconomic trends, political economy dynamics, and global conflicts impact on financial markets">
 <meta property="twitter:image" content="https://lorthelas.com/favicon.png">
 
 <!-- Structured Data for Google -->
@@ -770,12 +770,12 @@
     </script>
 
     <script>
-        // NEW: Global variables for pagination
+        // Global variables for pagination
         let allReports = [];
         let displayedReports = [];
         const reportsPerPage = 9; // Show 9 reports initially, then 6 more each time
 
-        // ENHANCED: Function to load reports with proper YAML parsing
+        // Function to load reports with proper YAML parsing
         async function loadReports() {
             try {
                 const response = await fetch('https://api.github.com/repos/AndreiDumitrache/lorthelas-research-website/contents/content/reports');
@@ -788,7 +788,7 @@
                         const contentResponse = await fetch(file.download_url);
                         const content = await contentResponse.text();
                         
-                        // ENHANCED: Parse frontmatter with multiline support
+                        // Parse frontmatter with multiline support
                         const parts = content.split('---');
                         if (parts.length >= 3) {
                             const frontmatter = parts[1];
@@ -818,7 +818,7 @@
             }
         }
 
-        // NEW: Enhanced YAML parser that handles multiline content
+        // FIXED: Enhanced YAML parser that properly handles multiline content
         function parseYamlFrontmatter(yamlText) {
             const report = {};
             const lines = yamlText.split('\n').map(line => line.replace(/\r$/, ''));
@@ -841,40 +841,56 @@
                 const key = line.substring(0, colonIndex).trim();
                 let value = line.substring(colonIndex + 1).trim();
                 
-                // Check for multiline values (|, >, >-, |-)
-                if (value === '|' || value === '>' || value === '>-' || value === '|-' || value === '') {
+                // FIXED: Better multiline handling
+                if (value === '|' || value === '>' || value === '>-' || value === '|-' || 
+                    (value === '' && i + 1 < lines.length && lines[i + 1].startsWith('  '))) {
+                    
                     // This is a multiline field, collect the following indented lines
                     const multilineContent = [];
                     i++; // Move to next line
                     
+                    // Find the base indentation level
+                    let baseIndent = 0;
+                    if (i < lines.length && lines[i].match(/^(\s+)/)) {
+                        baseIndent = lines[i].match(/^(\s+)/)[1].length;
+                    }
+                    
                     while (i < lines.length) {
                         const nextLine = lines[i];
                         
-                        // If line starts with spaces and is not a new key, it's part of multiline content
-                        if (nextLine.startsWith('  ') || nextLine.startsWith('\t') || (nextLine.trim() === '' && i < lines.length - 1)) {
-                            multilineContent.push(nextLine.replace(/^  /, '').replace(/^\t/, ''));
-                            i++;
-                        } else if (nextLine.trim() === '') {
-                            // Empty line in multiline content
+                        // Empty line
+                        if (nextLine.trim() === '') {
                             multilineContent.push('');
                             i++;
-                        } else if (nextLine.includes(':') && !nextLine.startsWith('  ')) {
-                            // This is a new key, stop collecting multiline content
+                            continue;
+                        }
+                        
+                        // Check if this line has the same or greater indentation
+                        const currentIndent = nextLine.match(/^(\s*)/)[1].length;
+                        
+                        if (currentIndent >= baseIndent && baseIndent > 0) {
+                            // Part of multiline content - remove base indentation
+                            const cleanLine = nextLine.substring(baseIndent);
+                            multilineContent.push(cleanLine);
+                            i++;
+                        } else if (nextLine.includes(':') && currentIndent === 0) {
+                            // This is a new key at root level, stop collecting
                             break;
                         } else {
-                            // Continuation of multiline content
+                            // Uncertain case, include the line
                             multilineContent.push(nextLine.trim());
                             i++;
                         }
                     }
                     
-                    // Join the multiline content
-                    value = multilineContent.join(' ').trim();
-                    
-                    // Remove any markdown formatting for display in cards
-                    value = value.replace(/\*\*(.*?)\*\*/g, '$1'); // Remove bold
-                    value = value.replace(/\*(.*?)\*/g, '$1'); // Remove italic
-                    value = value.replace(/#{1,6}\s+/g, ''); // Remove headers
+                    // FIXED: Join multiline content properly and preserve formatting
+                    if (value === '|' || value === '|-') {
+                        // Literal block scalar - preserve line breaks
+                        value = multilineContent.join('\n').trim();
+                    } else {
+                        // Folded block scalar - join with spaces, but preserve paragraph breaks
+                        value = multilineContent.join(' ').replace(/\s+/g, ' ').trim();
+                    }
                     
                 } else {
                     // Single line value, remove quotes
@@ -882,14 +898,31 @@
                     i++;
                 }
                 
+                // FIXED: Clean up markdown but don't truncate
+                if (key === 'summary') {
+                    // Remove markdown formatting for display but keep full content
+                    value = value.replace(/\*\*(.*?)\*\*/g, '$1'); // Remove bold
+                    value = value.replace(/\*(.*?)\*/g, '$1'); // Remove italic
+                    value = value.replace(/#{1,6}\s+/g, ''); // Remove headers
+                    // Remove any remaining YAML artifacts
+                    value = value.replace(/^[>|][-+]?\s*/, '');
+                    value = value.replace(/\n+/g, ' ').trim();
+                }
+                
                 report[key] = value;
-                console.log(`Parsed ${key}:`, value.substring(0, 100) + (value.length > 100 ? '...' : ''));
+                
+                // FIXED: Log without truncating - just for debugging
+                if (key === 'summary') {
+                    console.log(`Parsed ${key} (${value.length} chars):`, value);
+                } else {
+                    console.log(`Parsed ${key}:`, value.substring(0, 50) + (value.length > 50 ? '...' : ''));
+                }
             }
             
             return report;
         }
 
-        // NEW: Load more reports function
+        // Load more reports function
         function loadMoreReports() {
             const nextBatch = allReports.slice(displayedReports.length, displayedReports.length + 6);
             displayedReports = displayedReports.concat(nextBatch);
@@ -897,7 +930,7 @@
             updateLoadMoreButton();
         }
 
-        // NEW: Update load more button visibility
+        // Update load more button visibility
         function updateLoadMoreButton() {
             const loadMoreContainer = document.getElementById('load-more-container');
             const loadMoreCount = document.getElementById('load-more-count');
@@ -911,7 +944,7 @@
             }
         }
 
-        // Function to display reports (MODIFIED to work with displayedReports)
+        // FIXED: Function to display reports with full summaries
         function displayReports(reports, filter = 'all') {
             const grid = document.getElementById('reports-grid');
             const loading = document.getElementById('loading');
@@ -935,20 +968,19 @@
                     day: 'numeric'
                 });
                 
-                // ENHANCED: Better summary processing
+                // FIXED: Use full summary without artificial truncation
                 let summary = report.summary || 'No summary available.';
                 
-                // Clean up any remaining markdown or YAML artifacts
-                summary = summary.replace(/^[>|][-+]?\s*/, ''); // Remove YAML indicators
-                summary = summary.replace(/\n+/g, ' '); // Replace line breaks with spaces
-                summary = summary.trim();
+                // Final cleanup - ensure no artifacts remain
+                summary = summary.replace(/^[>|][-+]?\s*/, ''); // Remove any remaining YAML indicators
+                summary = summary.replace(/\s+/g, ' ').trim(); // Normalize whitespace
                 
                 // If summary is still empty or just whitespace
                 if (!summary || summary.length < 3) {
                     summary = 'No summary available.';
                 }
                 
-                console.log(`Report: ${report.title}, Summary length: ${summary.length}`);
+                console.log(`Displaying report: ${report.title}, Summary length: ${summary.length}`);
                 
                 return `
                     <div class="report-card">
@@ -972,7 +1004,7 @@
             }).join('');
         }
 
-        // NEW: Generate archive section with dropdowns
+        // Generate archive section with dropdowns
         function generateArchive() {
             const yearDropdown = document.getElementById('archive-year');
             const monthDropdown = document.getElementById('archive-month');
@@ -1041,7 +1073,7 @@
             });
         }
 
-        // NEW: Filter by archive selection
+        // Filter by archive selection
         function filterByArchiveSelection() {
             const selectedYear = document.getElementById('archive-year').value;
             const selectedMonth = document.getElementById('archive-month').value;
@@ -1085,7 +1117,7 @@
             searchStats.style.display = 'block';
         }
 
-        // NEW: Clear archive filter
+        // Clear archive filter
         function clearArchiveFilter() {
             // Reset dropdowns
             document.getElementById('archive-year').value = '';
@@ -1112,7 +1144,7 @@
             document.getElementById('reports-grid').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Function to setup filtering (MODIFIED to work with pagination)
+        // Function to setup filtering
         function setupFiltering() {
             const tabs = document.querySelectorAll('.filter-tab');
             
