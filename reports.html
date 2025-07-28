@@ -818,7 +818,7 @@
             }
         }
 
-        // COMPLETELY REWRITTEN: Robust YAML parser that handles all multiline formats
+        // FIXED: YAML parser that properly handles folded scalars (multi-line without |)
         function parseYamlFrontmatter(yamlText) {
             const report = {};
             const lines = yamlText.split('\n').map(line => line.replace(/\r$/, ''));
@@ -843,41 +843,29 @@
                 const key = line.substring(0, colonIndex).trim();
                 let value = line.substring(colonIndex + 1).trim();
                 
-                // Handle different YAML value types
+                // Handle block scalars (| or >)
                 if (value === '|' || value === '>' || value === '|-' || value === '>-') {
-                    // Block scalar - collect indented lines
                     const blockLines = [];
                     i++; // Move to next line
                     
-                    // Determine indentation level from first content line
                     let indentLevel = null;
-                    
                     while (i < lines.length) {
                         const currentLine = lines[i];
                         
-                        // If we hit a line that starts a new key at root level, stop
-                        if (currentLine.trim() && !currentLine.startsWith(' ') && !currentLine.startsWith('\t') && currentLine.includes(':')) {
-                            break;
-                        }
-                        
-                        // Empty line
-                        if (!currentLine.trim()) {
+                        if (currentLine.trim() === '') {
                             blockLines.push('');
                             i++;
                             continue;
                         }
                         
-                        // Set indentation level from first content line
                         if (indentLevel === null && (currentLine.startsWith(' ') || currentLine.startsWith('\t'))) {
                             const match = currentLine.match(/^(\s+)/);
                             indentLevel = match ? match[1].length : 0;
                         }
                         
-                        // If line has proper indentation, it's part of our block
                         if (indentLevel !== null) {
                             const lineIndent = currentLine.match(/^(\s*)/)[1].length;
                             if (lineIndent >= indentLevel) {
-                                // Remove the base indentation
                                 const content = currentLine.substring(indentLevel);
                                 blockLines.push(content);
                                 i++;
@@ -885,59 +873,56 @@
                             }
                         }
                         
-                        // If we get here, this line doesn't belong to our block
-                        break;
+                        if (currentLine.includes(':') && !currentLine.startsWith(' ')) {
+                            break;
+                        }
+                        i++;
                     }
                     
-                    // Join the collected lines
                     if (value === '|' || value === '|-') {
-                        // Literal style - preserve line breaks
                         value = blockLines.join('\n').trim();
                     } else {
-                        // Folded style - join with spaces
                         value = blockLines.join(' ').replace(/\s+/g, ' ').trim();
                     }
+                }
+                // CRITICAL FIX: Handle YAML folded scalars (multi-line without indicators)
+                else if (value && i + 1 < lines.length) {
+                    // Check if the next lines are indented continuations
+                    const continuationLines = [value];
+                    let nextIndex = i + 1;
                     
-                } else if (value === '' && i + 1 < lines.length && lines[i + 1].match(/^\s+\S/)) {
-                    // Value on next line with indentation
-                    const blockLines = [];
-                    i++; // Move to next line
-                    
-                    let indentLevel = null;
-                    
-                    while (i < lines.length) {
-                        const currentLine = lines[i];
+                    while (nextIndex < lines.length) {
+                        const nextLine = lines[nextIndex];
                         
-                        if (!currentLine.trim()) {
-                            blockLines.push('');
-                            i++;
+                        // Empty line
+                        if (nextLine.trim() === '') {
+                            continuationLines.push('');
+                            nextIndex++;
                             continue;
                         }
                         
-                        if (indentLevel === null) {
-                            const match = currentLine.match(/^(\s+)/);
-                            indentLevel = match ? match[1].length : 0;
-                        }
-                        
-                        const lineIndent = currentLine.match(/^(\s*)/)[1].length;
-                        if (lineIndent >= indentLevel) {
-                            const content = currentLine.substring(indentLevel);
-                            blockLines.push(content);
-                            i++;
-                        } else if (currentLine.includes(':') && lineIndent === 0) {
-                            // New root level key
+                        // If line starts with spaces and doesn't contain a colon (new key), it's a continuation
+                        if (nextLine.startsWith('  ') && !nextLine.trim().includes(':')) {
+                            // Remove the leading spaces and add to continuation
+                            continuationLines.push(nextLine.substring(2));
+                            nextIndex++;
+                        } else if (nextLine.includes(':') && !nextLine.startsWith(' ')) {
+                            // This is a new key at root level
                             break;
                         } else {
-                            i++;
+                            // Uncertain case - stop here
+                            break;
                         }
                     }
                     
-                    value = blockLines.join(' ').replace(/\s+/g, ' ').trim();
-                    
+                    // If we found continuation lines, join them
+                    if (continuationLines.length > 1) {
+                        value = continuationLines.join(' ').replace(/\s+/g, ' ').trim();
+                        i = nextIndex - 1; // Set i to the last processed line
+                    }
                 } else {
                     // Simple single-line value
                     value = value.replace(/^["']|["']$/g, ''); // Remove quotes
-                    i++;
                 }
                 
                 // Clean up the value if it's a summary
@@ -951,10 +936,12 @@
                 
                 report[key] = value;
                 
-                // Debug logging (only for summary to check length)
+                // Debug logging
                 if (key === 'summary') {
                     console.log(`✅ Parsed summary (${value.length} characters):`, value);
                 }
+                
+                i++;
             }
             
             return report;
