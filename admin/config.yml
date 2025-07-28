@@ -18,7 +18,7 @@ collections:
         widget: "markdown"
         required: false
         minimal: true
-        hint: "Write detailed summary - unlimited length"
+        hint: "Write summary - limit to 60 characters"
       - {label: "Content", name: "body", widget: "markdown"}
       - {label: "PDF File", name: "pdf", widget: "file", required: false}
   - name: "portfolio"
