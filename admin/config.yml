@@ -14,10 +14,10 @@ collections:
       - {label: "Date", name: "date", widget: "datetime"}
       - {label: "Category", name: "category", widget: "select", options: ["Macroeconomic", "Political Economy", "Portfolio Strategy", "Market Analysis", "Geopolitical"]}
       - name: "summary"
-  label: "Summary" 
-  widget: "text"  # Change from "markdown" to "text"
-  required: false
-  hint: "Write summary - no character limit"
+        label: "Summary" 
+        widget: "text"  # Change from "markdown" to "text"
+        required: false
+        hint: "Write summary - no character limit"
       - {label: "Content", name: "body", widget: "markdown"}
       - {label: "PDF File", name: "pdf", widget: "file", required: false}
   - name: "portfolio"
