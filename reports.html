@@ -818,7 +818,7 @@
             }
         }
 
-        // FIXED: YAML parser that properly handles folded scalars (multi-line without |)
+        // COMPLETELY FIXED: YAML parser that handles all formats including >- indicators
         function parseYamlFrontmatter(yamlText) {
             const report = {};
             const lines = yamlText.split('\n').map(line => line.replace(/\r$/, ''));
@@ -843,8 +843,11 @@
                 const key = line.substring(0, colonIndex).trim();
                 let value = line.substring(colonIndex + 1).trim();
                 
-                // Handle block scalars (| or >)
+                console.log(`🔍 Processing key: "${key}", initial value: "${value}"`);
+                
+                // Handle block scalars with indicators (|, >, >-, |-)
                 if (value === '|' || value === '>' || value === '|-' || value === '>-') {
+                    console.log(`📋 Found block scalar indicator: ${value}`);
                     const blockLines = [];
                     i++; // Move to next line
                     
@@ -852,17 +855,27 @@
                     while (i < lines.length) {
                         const currentLine = lines[i];
                         
+                        // Empty line
                         if (currentLine.trim() === '') {
                             blockLines.push('');
                             i++;
                             continue;
                         }
                         
+                        // Set indentation level from first content line
                         if (indentLevel === null && (currentLine.startsWith(' ') || currentLine.startsWith('\t'))) {
                             const match = currentLine.match(/^(\s+)/);
                             indentLevel = match ? match[1].length : 0;
+                            console.log(`📏 Set indent level to: ${indentLevel}`);
                         }
                         
+                        // Check if this is a new root-level key
+                        if (currentLine.includes(':') && !currentLine.startsWith(' ') && !currentLine.startsWith('\t')) {
+                            console.log(`🔑 Found new root key, stopping block at: "${currentLine}"`);
+                            break;
+                        }
+                        
+                        // If line has proper indentation, it's part of our block
                         if (indentLevel !== null) {
                             const lineIndent = currentLine.match(/^(\s*)/)[1].length;
                             if (lineIndent >= indentLevel) {
@@ -873,19 +886,21 @@
                             }
                         }
                         
-                        if (currentLine.includes(':') && !currentLine.startsWith(' ')) {
-                            break;
-                        }
-                        i++;
+                        // If we get here, this line doesn't belong to our block
+                        console.log(`⏹️ Line doesn't belong to block: "${currentLine}"`);
+                        break;
                     }
                     
+                    // Join the collected lines
                     if (value === '|' || value === '|-') {
                         value = blockLines.join('\n').trim();
                     } else {
                         value = blockLines.join(' ').replace(/\s+/g, ' ').trim();
                     }
+                    
+                    console.log(`✅ Block scalar result: "${value}" (${value.length} chars)`);
                 }
-                // CRITICAL FIX: Handle YAML folded scalars (multi-line without indicators)
+                // Handle YAML folded scalars (multi-line without indicators)
                 else if (value && i + 1 < lines.length) {
                     // Check if the next lines are indented continuations
                     const continuationLines = [value];
@@ -903,7 +918,6 @@
                         
                         // If line starts with spaces and doesn't contain a colon (new key), it's a continuation
                         if (nextLine.startsWith('  ') && !nextLine.trim().includes(':')) {
-                            // Remove the leading spaces and add to continuation
                             continuationLines.push(nextLine.substring(2));
                             nextIndex++;
                         } else if (nextLine.includes(':') && !nextLine.startsWith(' ')) {
@@ -919,6 +933,7 @@
                     if (continuationLines.length > 1) {
                         value = continuationLines.join(' ').replace(/\s+/g, ' ').trim();
                         i = nextIndex - 1; // Set i to the last processed line
+                        console.log(`🔗 Joined continuation lines: "${value}"`);
                     }
                 } else {
                     // Simple single-line value
@@ -935,15 +950,12 @@
                 }
                 
                 report[key] = value;
-                
-                // Debug logging
-                if (key === 'summary') {
-                    console.log(`✅ Parsed summary (${value.length} characters):`, value);
-                }
+                console.log(`✅ Final result for "${key}": "${value}" (${typeof value})`);
                 
                 i++;
             }
             
+            console.log(`📋 Final report object:`, report);
             return report;
         }
 
