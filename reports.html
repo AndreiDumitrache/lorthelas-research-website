@@ -1043,7 +1043,7 @@
                         <p class="report-summary">${summary}</p>
                         <div class="report-actions">
                             <a href="report.html?report=${report.filename}" class="read-more">Read Report</a>
-                            ${report.pdf ? `<a href="${report.pdf}" class="download-pdf">📄 Download PDF</a>` : ''}
+                            ${report.pdf ? `<a href="${report.pdf}" class="read-more" style="background: transparent; color: #6b7280; border-color: #6b7280;">📄 Download PDF</a>` : ''}
                             <div style="position: relative;">
                                 <button class="share-button" onclick="toggleShareMenu(event, '${report.filename}', '${report.title?.replace(/'/g, "\\'")}')">
                                     📤 Share
