@@ -315,15 +315,123 @@
         }
 
         .form-message.success {
-            background: #d1fae5;
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
             color: #065f46;
-            border: 1px solid #a7f3d0;
+            border: 2px solid #10b981;
+            padding: 1.5rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.2);
+            animation: slideIn 0.5s ease-out;
         }
 
         .form-message.error {
             background: #fee2e2;
             color: #991b1b;
             border: 1px solid #fca5a5;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Email Reveal System */
+        .email-reveal-container {
+            margin: 1.5rem 0;
+        }
+
+        .reveal-email-btn {
+            background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 25px;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(55, 65, 81, 0.2);
+        }
+
+        .reveal-email-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(55, 65, 81, 0.3);
+        }
+
+        .revealed-email {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border: 2px solid #10b981;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            animation: slideDown 0.4s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .email-address {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #065f46;
+            font-family: 'Monaco', 'Consolas', monospace;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .email-address:hover {
+            color: #047857;
+        }
+
+        .copy-email-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .copy-email-btn:hover {
+            background: #059669;
+            transform: scale(1.05);
+        }
+
+        .copy-email-btn:active {
+            transform: scale(0.95);
+        }
+
+        .copy-success {
+            background: #047857 !important;
+            animation: copyFeedback 0.3s ease;
+        }
+
+        @keyframes copyFeedback {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
 
         /* Services Section */
@@ -426,6 +534,65 @@
             padding-top: 2rem;
         }
 
+        /* Contact Hero Image Animation */
+        .contact-hero-image {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s ease-out;
+            max-width: 100%;
+            height: auto;
+            border-radius: 16px;
+            box-shadow: none;
+            max-height: 400px;
+            object-fit: cover;
+        }
+
+        .contact-hero-image.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .financial-term {
+            position: relative;
+            border-bottom: 2px dotted #9ca3af;
+            cursor: help;
+            color: #6b7280;
+        }
+
+        .tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #374151;
+            color: #f3f4f6;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .financial-term:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #374151;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             /* Hide Home button on mobile */
@@ -473,123 +640,63 @@
             .services-grid {
                 grid-template-columns: 1fr;
             }
-        }
 
-        /* Contact Hero Image Animation */
-        .contact-hero-image {
-            display: inline-block;
-            opacity: 0;
-            transform: translateY(50px);
-            transition: all 1s ease-out;
-            max-width: 100%;
-            height: auto;
-            border-radius: 16px;
-            box-shadow: none;
-            max-height: 400px;
-            object-fit: cover;
-        }
-
-        .contact-hero-image.revealed {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .financial-term {
-            position: relative;
-            border-bottom: 2px dotted #9ca3af;
-            cursor: help;
-            color: #6b7280;
-        }
-
-        .tooltip {
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #374151;
-            color: #f3f4f6;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            white-space: nowrap;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            z-index: 1000;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .financial-term:hover .tooltip {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .tooltip::after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border: 5px solid transparent;
-            border-top-color: #374151;
-        }
-
-        /* Email protection styles */
-        .protected-email {
-            color: #374151;
-            font-weight: 600;
-            text-decoration: none;
-            cursor: pointer;
-            border-bottom: 1px dotted #374151;
-        }
-
-        .protected-email:hover {
-            color: #1f2937;
+            .revealed-email {
+                flex-direction: column;
+                gap: 0.75rem;
+                text-align: center;
+            }
+            
+            .email-address {
+                font-size: 1rem;
+                word-break: break-all;
+            }
         }
     </style>
     <!-- Favicon and Icons -->
-<link rel="icon" type="image/png" href="/favicon.png">
-<link rel="apple-touch-icon" href="/favicon.png">
-<link rel="shortcut icon" href="/favicon.png">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/favicon.png">
+    <link rel="shortcut icon" href="/favicon.png">
 
-<!-- Open Graph / Facebook -->
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://lorthelas.com">
-<meta property="og:title" content="Lorthelas Research | Capital structuring & Investment strategy">
-<meta property="og:description" content="Comprehensive analysis of macroeconomic trends, political economy dynamics, and global conflicts impact on financial markets">
-<meta property="og:image" content="https://lorthelas.com/favicon.png">
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://lorthelas.com">
+    <meta property="og:title" content="Lorthelas Research | Capital structuring & Investment strategy">
+    <meta property="og:description" content="Comprehensive analysis of macroeconomic trends, political economy dynamics, and global conflicts impact on financial markets">
+    <meta property="og:image" content="https://lorthelas.com/favicon.png">
 
-<!-- Twitter -->
-<meta property="twitter:card" content="summary_large_image">
-<meta property="twitter:url" content="https://lorthelas.com">
-<meta property="twitter:title" content="Lorthelas Research | Capital structuring & Investment strategy">
-<meta property="twitter:description" content="Comprehensive analysis of macroeconomic trends, political economy dynamics, and global conflicts impact on financial markets">
-<meta property="twitter:image" content="https://lorthelas.com/favicon.png">
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://lorthelas.com">
+    <meta property="twitter:title" content="Lorthelas Research | Capital structuring & Investment strategy">
+    <meta property="twitter:description" content="Comprehensive analysis of macroeconomic trends, political economy dynamics, and global conflicts impact on financial markets">
+    <meta property="twitter:image" content="https://lorthelas.com/favicon.png">
 
-<!-- Structured Data for Google -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "Lorthelas Research",
-  "description": "Capital structuring & Investment strategy",
-  "url": "https://lorthelas.com",
-  "logo": {
-    "@type": "ImageObject",
-    "url": "https://lorthelas.com/favicon.png",
-    "width": 300,
-    "height": 300
-  },
-  "sameAs": [
-    "https://lorthelas.com"
-  ],
-  "contactPoint": {
-    "@type": "ContactPoint",
-    "telephone": "",
-    "contactType": "customer service",
-    "email": "research@lorthelas.com"
-  }
-}
-</script>
+    <!-- Structured Data for Google -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Lorthelas Research",
+      "description": "Capital structuring & Investment strategy",
+      "url": "https://lorthelas.com",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://lorthelas.com/favicon.png",
+        "width": 300,
+        "height": 300
+      },
+      "sameAs": [
+        "https://lorthelas.com"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "",
+        "contactType": "customer service",
+        "email": "research@lorthelas.com"
+      }
+    }
+    </script>
 </head>
 <body>
     <!-- Header -->
@@ -663,10 +770,22 @@
                 <div style="max-width: 600px; margin: 0 auto;">
                     <div class="contact-form">
                         <h3 class="contact-title">Send us a Message</h3>
-                        <p style="color: #6b7280; margin-bottom: 2rem; text-align: center;">
-                            Fill out the form below with your inquiry, or you can send us an email directly at 
-                            <span class="protected-email" onclick="sendEmail()">research at lorthelas dot com</span>
-                        </p>
+                        <div style="color: #6b7280; margin-bottom: 2rem; text-align: center;">
+                            <p style="margin-bottom: 1rem;">Fill out the form below with your inquiry, or you can contact us directly:</p>
+                            
+                            <!-- Email Reveal System -->
+                            <div class="email-reveal-container">
+                                <button class="reveal-email-btn" id="reveal-email-btn" onclick="revealEmail()">
+                                    📧 Click to Reveal Email Address
+                                </button>
+                                <div class="revealed-email" id="revealed-email" style="display: none;">
+                                    <span class="email-address" id="email-address"></span>
+                                    <button class="copy-email-btn" onclick="copyEmail()" title="Copy to clipboard">
+                                        📋 Copy
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
 
                         <!-- Form Messages -->
                         <div id="form-success" class="form-message success">
@@ -731,133 +850,169 @@
         </div>
     </footer>
 
+    <script>
+        // Email reveal functionality
+        function revealEmail() {
+            const revealBtn = document.getElementById('reveal-email-btn');
+            const revealedEmail = document.getElementById('revealed-email');
+            const emailAddress = document.getElementById('email-address');
+            
+            // Construct the email (obfuscated)
+            const user = 'research';
+            const domain = 'lorthelas.com';
+            const email = user + '@' + domain;
+            
+            // Hide button and show email
+            revealBtn.style.display = 'none';
+            revealedEmail.style.display = 'flex';
+            emailAddress.textContent = email;
+            
+            // Make email clickable to open mailto
+            emailAddress.onclick = function() {
+                window.location.href = 'mailto:' + email;
+            };
+            
+            // Optional: Auto-hide after 30 seconds for security
+            setTimeout(function() {
+                revealBtn.style.display = 'inline-block';
+                revealedEmail.style.display = 'none';
+            }, 30000);
+        }
 
-<script>
-// Protected email function
-function sendEmail() {
-    const user = 'research';
-    const domain = 'lorthelas.com';
-    window.location.href = 'mailto:' + user + '@' + domain;
-}
+        // Copy email to clipboard
+        function copyEmail() {
+            const emailAddress = document.getElementById('email-address').textContent;
+            const copyBtn = document.querySelector('.copy-email-btn');
+            
+            // Copy to clipboard
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(emailAddress).then(function() {
+                    // Visual feedback
+                    const originalText = copyBtn.textContent;
+                    copyBtn.textContent = '✅ Copied!';
+                    copyBtn.classList.add('copy-success');
+                    
+                    setTimeout(function() {
+                        copyBtn.textContent = originalText;
+                        copyBtn.classList.remove('copy-success');
+                    }, 2000);
+                });
+            } else {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = emailAddress;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                // Visual feedback
+                copyBtn.textContent = '✅ Copied!';
+                setTimeout(function() {
+                    copyBtn.textContent = '📋 Copy';
+                }, 2000);
+            }
+        }
 
-// Form submission handling with clear notification
-document.getElementById('contact-form').addEventListener('submit', function(e) {
-    const submitBtn = document.getElementById('submit-btn');
-    const btnText = document.getElementById('btn-text');
-    const successMsg = document.getElementById('form-success');
-    const errorMsg = document.getElementById('form-error');
-    
-    // Hide any existing messages
-    successMsg.style.display = 'none';
-    errorMsg.style.display = 'none';
-    
-    // Update button state
-    submitBtn.disabled = true;
-    btnText.textContent = 'Sending...';
-    
-    // Show success message after form submission
-    setTimeout(function() {
-        // Reset button
-        submitBtn.disabled = false;
-        btnText.textContent = 'Send Message';
-        
-        // Show success message
-        successMsg.style.display = 'block';
-        successMsg.innerHTML = '<strong>✅ Success!</strong> Your message has been sent successfully. We\'ll get back to you within 24 hours.';
-        
-        // Clear the form
-        document.getElementById('contact-form').reset();
-        
-        // Scroll to success message
-        successMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        
-        // Auto-hide message after 10 seconds
-        setTimeout(function() {
+        // Optional: Add keyboard shortcut to reveal email (Ctrl+E)
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'e') {
+                e.preventDefault();
+                const revealBtn = document.getElementById('reveal-email-btn');
+                if (revealBtn.style.display !== 'none') {
+                    revealEmail();
+                }
+            }
+        });
+
+        // Form submission handling with clear notification
+        document.getElementById('contact-form').addEventListener('submit', function(e) {
+            const submitBtn = document.getElementById('submit-btn');
+            const btnText = document.getElementById('btn-text');
+            const successMsg = document.getElementById('form-success');
+            const errorMsg = document.getElementById('form-error');
+            
+            // Hide any existing messages
             successMsg.style.display = 'none';
-        }, 10000);
-        
-    }, 2000); // Wait 2 seconds to simulate sending
-});
+            errorMsg.style.display = 'none';
+            
+            // Update button state
+            submitBtn.disabled = true;
+            btnText.textContent = 'Sending...';
+            
+            // Show success message after form submission
+            setTimeout(function() {
+                // Reset button
+                submitBtn.disabled = false;
+                btnText.textContent = 'Send Message';
+                
+                // Show success message
+                successMsg.style.display = 'block';
+                successMsg.innerHTML = '<strong>✅ Success!</strong> Your message has been sent successfully. We\'ll get back to you within 24 hours.';
+                
+                // Clear the form
+                document.getElementById('contact-form').reset();
+                
+                // Scroll to success message
+                successMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                
+                // Auto-hide message after 10 seconds
+                setTimeout(function() {
+                    successMsg.style.display = 'none';
+                }, 10000);
+                
+            }, 2000); // Wait 2 seconds to simulate sending
+        });
 
-// Alternative: Check for Netlify's redirect parameters
-document.addEventListener('DOMContentLoaded', function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const successMsg = document.getElementById('form-success');
-    const errorMsg = document.getElementById('form-error');
-    
-    // Check if Netlify redirected back with success
-    if (window.location.pathname.includes('contact') && document.referrer.includes('contact')) {
-        // Likely a successful form submission
-        setTimeout(function() {
-            successMsg.style.display = 'block';
-            successMsg.innerHTML = '<strong>✅ Message Sent!</strong> Thank you for contacting Lorthelas Research. We\'ll respond within 24 hours.';
-            successMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }, 500);
-    }
-});
+        // Alternative: Check for Netlify's redirect parameters
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const successMsg = document.getElementById('form-success');
+            const errorMsg = document.getElementById('form-error');
+            
+            // Check if Netlify redirected back with success
+            if (window.location.pathname.includes('contact') && document.referrer.includes('contact')) {
+                // Likely a successful form submission
+                setTimeout(function() {
+                    successMsg.style.display = 'block';
+                    successMsg.innerHTML = '<strong>✅ Message Sent!</strong> Thank you for contacting Lorthelas Research. We\'ll respond within 24 hours.';
+                    successMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 500);
+            }
+        });
 
-// Enhanced success message styling
-const enhancedSuccessStyle = `
-.form-message.success {
-    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-    color: #065f46;
-    border: 2px solid #10b981;
-    padding: 1.5rem;
-    border-radius: 12px;
-    font-size: 1.1rem;
-    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.2);
-    animation: slideIn 0.5s ease-out;
-}
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-`;
-
-// Add enhanced styles
-const styleSheet = document.createElement('style');
-styleSheet.textContent = enhancedSuccessStyle;
-document.head.appendChild(styleSheet);
-
-// Reveal contact hero image on scroll
-function revealContactImage() {
-    const heroImage = document.querySelector('.contact-hero-image');
-    if (heroImage) {
-        const elementTop = heroImage.getBoundingClientRect().top;
-        const elementVisible = 150;
-        
-        if (elementTop < window.innerHeight - elementVisible) {
-            heroImage.classList.add('revealed');
+        // Reveal contact hero image on scroll
+        function revealContactImage() {
+            const heroImage = document.querySelector('.contact-hero-image');
+            if (heroImage) {
+                const elementTop = heroImage.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementTop < window.innerHeight - elementVisible) {
+                    heroImage.classList.add('revealed');
+                }
+            }
         }
-    }
-}
 
-// Add immediate reveal on page load
-document.addEventListener('DOMContentLoaded', function() {
-    // Immediate reveal (for when image is already in viewport)
-    const heroImage = document.querySelector('.contact-hero-image');
-    if (heroImage) {
-        // Check if image is in viewport immediately
-        const rect = heroImage.getBoundingClientRect();
-        if (rect.top < window.innerHeight && rect.bottom > 0) {
-            heroImage.classList.add('revealed');
-        }
-    }
-    
-    // Also set up scroll listener
-    revealContactImage();
-});
+        // Add immediate reveal on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Immediate reveal (for when image is already in viewport)
+            const heroImage = document.querySelector('.contact-hero-image');
+            if (heroImage) {
+                // Check if image is in viewport immediately
+                const rect = heroImage.getBoundingClientRect();
+                if (rect.top < window.innerHeight && rect.bottom > 0) {
+                    heroImage.classList.add('revealed');
+                }
+            }
+            
+            // Also set up scroll listener
+            revealContactImage();
+        });
 
-// Keep scroll listener
-window.addEventListener('scroll', revealContactImage);
-window.addEventListener('load', revealContactImage);
-</script>
+        // Keep scroll listener
+        window.addEventListener('scroll', revealContactImage);
+        window.addEventListener('load', revealContactImage);
+    </script>
 </body>
 </html>
