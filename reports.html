@@ -818,7 +818,7 @@
             }
         }
 
-        // FIXED: Enhanced YAML parser that properly handles multiline content
+        // COMPLETELY REWRITTEN: Robust YAML parser that handles all multiline formats
         function parseYamlFrontmatter(yamlText) {
             const report = {};
             const lines = yamlText.split('\n').map(line => line.replace(/\r$/, ''));
@@ -827,11 +827,13 @@
             while (i < lines.length) {
                 const line = lines[i].trim();
                 
+                // Skip empty lines and comments
                 if (!line || line.startsWith('#')) {
                     i++;
                     continue;
                 }
                 
+                // Find the key-value separator
                 const colonIndex = line.indexOf(':');
                 if (colonIndex === -1) {
                     i++;
@@ -841,81 +843,117 @@
                 const key = line.substring(0, colonIndex).trim();
                 let value = line.substring(colonIndex + 1).trim();
                 
-                // FIXED: Better multiline handling
-                if (value === '|' || value === '>' || value === '>-' || value === '|-' || 
-                    (value === '' && i + 1 < lines.length && lines[i + 1].startsWith('  '))) {
-                    
-                    // This is a multiline field, collect the following indented lines
-                    const multilineContent = [];
+                // Handle different YAML value types
+                if (value === '|' || value === '>' || value === '|-' || value === '>-') {
+                    // Block scalar - collect indented lines
+                    const blockLines = [];
                     i++; // Move to next line
                     
-                    // Find the base indentation level
-                    let baseIndent = 0;
-                    if (i < lines.length && lines[i].match(/^(\s+)/)) {
-                        baseIndent = lines[i].match(/^(\s+)/)[1].length;
-                    }
+                    // Determine indentation level from first content line
+                    let indentLevel = null;
                     
                     while (i < lines.length) {
-                        const nextLine = lines[i];
+                        const currentLine = lines[i];
+                        
+                        // If we hit a line that starts a new key at root level, stop
+                        if (currentLine.trim() && !currentLine.startsWith(' ') && !currentLine.startsWith('\t') && currentLine.includes(':')) {
+                            break;
+                        }
                         
                         // Empty line
-                        if (nextLine.trim() === '') {
-                            multilineContent.push('');
+                        if (!currentLine.trim()) {
+                            blockLines.push('');
                             i++;
                             continue;
                         }
                         
-                        // Check if this line has the same or greater indentation
-                        const currentIndent = nextLine.match(/^(\s*)/)[1].length;
+                        // Set indentation level from first content line
+                        if (indentLevel === null && (currentLine.startsWith(' ') || currentLine.startsWith('\t'))) {
+                            const match = currentLine.match(/^(\s+)/);
+                            indentLevel = match ? match[1].length : 0;
+                        }
                         
-                        if (currentIndent >= baseIndent && baseIndent > 0) {
-                            // Part of multiline content - remove base indentation
-                            const cleanLine = nextLine.substring(baseIndent);
-                            multilineContent.push(cleanLine);
+                        // If line has proper indentation, it's part of our block
+                        if (indentLevel !== null) {
+                            const lineIndent = currentLine.match(/^(\s*)/)[1].length;
+                            if (lineIndent >= indentLevel) {
+                                // Remove the base indentation
+                                const content = currentLine.substring(indentLevel);
+                                blockLines.push(content);
+                                i++;
+                                continue;
+                            }
+                        }
+                        
+                        // If we get here, this line doesn't belong to our block
+                        break;
+                    }
+                    
+                    // Join the collected lines
+                    if (value === '|' || value === '|-') {
+                        // Literal style - preserve line breaks
+                        value = blockLines.join('\n').trim();
+                    } else {
+                        // Folded style - join with spaces
+                        value = blockLines.join(' ').replace(/\s+/g, ' ').trim();
+                    }
+                    
+                } else if (value === '' && i + 1 < lines.length && lines[i + 1].match(/^\s+\S/)) {
+                    // Value on next line with indentation
+                    const blockLines = [];
+                    i++; // Move to next line
+                    
+                    let indentLevel = null;
+                    
+                    while (i < lines.length) {
+                        const currentLine = lines[i];
+                        
+                        if (!currentLine.trim()) {
+                            blockLines.push('');
                             i++;
-                        } else if (nextLine.includes(':') && currentIndent === 0) {
-                            // This is a new key at root level, stop collecting
+                            continue;
+                        }
+                        
+                        if (indentLevel === null) {
+                            const match = currentLine.match(/^(\s+)/);
+                            indentLevel = match ? match[1].length : 0;
+                        }
+                        
+                        const lineIndent = currentLine.match(/^(\s*)/)[1].length;
+                        if (lineIndent >= indentLevel) {
+                            const content = currentLine.substring(indentLevel);
+                            blockLines.push(content);
+                            i++;
+                        } else if (currentLine.includes(':') && lineIndent === 0) {
+                            // New root level key
                             break;
                         } else {
-                            // Uncertain case, include the line
-                            multilineContent.push(nextLine.trim());
                             i++;
                         }
                     }
                     
-                    // FIXED: Join multiline content properly and preserve formatting
-                    if (value === '|' || value === '|-') {
-                        // Literal block scalar - preserve line breaks
-                        value = multilineContent.join('\n').trim();
-                    } else {
-                        // Folded block scalar - join with spaces, but preserve paragraph breaks
-                        value = multilineContent.join(' ').replace(/\s+/g, ' ').trim();
-                    }
+                    value = blockLines.join(' ').replace(/\s+/g, ' ').trim();
                     
                 } else {
-                    // Single line value, remove quotes
-                    value = value.replace(/^["']|["']$/g, '');
+                    // Simple single-line value
+                    value = value.replace(/^["']|["']$/g, ''); // Remove quotes
                     i++;
                 }
                 
-                // FIXED: Clean up markdown but don't truncate
-                if (key === 'summary') {
-                    // Remove markdown formatting for display but keep full content
-                    value = value.replace(/\*\*(.*?)\*\*/g, '$1'); // Remove bold
-                    value = value.replace(/\*(.*?)\*/g, '$1'); // Remove italic
-                    value = value.replace(/#{1,6}\s+/g, ''); // Remove headers
-                    // Remove any remaining YAML artifacts
-                    value = value.replace(/^[>|][-+]?\s*/, '');
-                    value = value.replace(/\n+/g, ' ').trim();
+                // Clean up the value if it's a summary
+                if (key === 'summary' && value) {
+                    // Remove markdown formatting
+                    value = value.replace(/\*\*(.*?)\*\*/g, '$1'); // Bold
+                    value = value.replace(/\*(.*?)\*/g, '$1'); // Italic
+                    value = value.replace(/#{1,6}\s+/g, ''); // Headers
+                    value = value.replace(/\s+/g, ' ').trim(); // Normalize whitespace
                 }
                 
                 report[key] = value;
                 
-                // FIXED: Log without truncating - just for debugging
+                // Debug logging (only for summary to check length)
                 if (key === 'summary') {
-                    console.log(`Parsed ${key} (${value.length} chars):`, value);
-                } else {
-                    console.log(`Parsed ${key}:`, value.substring(0, 50) + (value.length > 50 ? '...' : ''));
+                    console.log(`✅ Parsed summary (${value.length} characters):`, value);
                 }
             }
             
@@ -944,7 +982,7 @@
             }
         }
 
-        // FIXED: Function to display reports with full summaries
+        // COMPLETELY FIXED: Function to display reports with full summaries
         function displayReports(reports, filter = 'all') {
             const grid = document.getElementById('reports-grid');
             const loading = document.getElementById('loading');
@@ -968,19 +1006,19 @@
                     day: 'numeric'
                 });
                 
-                // FIXED: Use full summary without artificial truncation
+                // Use the summary exactly as parsed - no additional processing
                 let summary = report.summary || 'No summary available.';
                 
-                // Final cleanup - ensure no artifacts remain
-                summary = summary.replace(/^[>|][-+]?\s*/, ''); // Remove any remaining YAML indicators
-                summary = summary.replace(/\s+/g, ' ').trim(); // Normalize whitespace
-                
-                // If summary is still empty or just whitespace
-                if (!summary || summary.length < 3) {
+                // Only do minimal cleanup if needed
+                if (!summary || summary.trim().length < 3) {
                     summary = 'No summary available.';
+                } else {
+                    // Just normalize whitespace, nothing else
+                    summary = summary.replace(/\s+/g, ' ').trim();
                 }
                 
-                console.log(`Displaying report: ${report.title}, Summary length: ${summary.length}`);
+                // Debug log for each report displayed
+                console.log(`📝 Displaying "${report.title}": ${summary.length} chars`);
                 
                 return `
                     <div class="report-card">
