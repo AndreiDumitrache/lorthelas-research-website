@@ -8,7 +8,7 @@ summary: >-
 
   years, decline which could be exacerbated by the continuation of the conflict in the
 
-  region. Additionally, we believe that Russia’s close allies are rather interested in its
+  region. Additionally, we explore the idea that Russia’s allies are interested in its
 
   resources rather than mutual collaboration benefits. 
 pdf: /images/the-russian-debt-trap-lorthelas-research.pdf
