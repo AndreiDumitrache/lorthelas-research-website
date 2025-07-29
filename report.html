@@ -544,7 +544,7 @@
             }
         }
 
-        // NEW: Enhanced YAML parser that handles multiline content (same as reports.html)
+        // COMPLETELY FIXED: Enhanced YAML parser that handles all formats including >- indicators
         function parseYamlFrontmatter(yamlText) {
             const report = {};
             const lines = yamlText.split('\n').map(line => line.replace(/\r$/, ''));
@@ -553,11 +553,13 @@
             while (i < lines.length) {
                 const line = lines[i].trim();
                 
+                // Skip empty lines and comments
                 if (!line || line.startsWith('#')) {
                     i++;
                     continue;
                 }
                 
+                // Find the key-value separator
                 const colonIndex = line.indexOf(':');
                 if (colonIndex === -1) {
                     i++;
@@ -567,46 +569,129 @@
                 const key = line.substring(0, colonIndex).trim();
                 let value = line.substring(colonIndex + 1).trim();
                 
-                // Check for multiline values (|, >, >-, |-)
-                if (value === '|' || value === '>' || value === '>-' || value === '|-' || value === '') {
-                    // This is a multiline field, collect the following indented lines
-                    const multilineContent = [];
+                console.log(`🔍 Processing key: "${key}", initial value: "${value}"`);
+                
+                // Handle block scalars with indicators (|, >, >-, |-)
+                if (value === '|' || value === '>' || value === '|-' || value === '>-') {
+                    console.log(`📋 Found block scalar indicator: ${value}`);
+                    const blockLines = [];
                     i++; // Move to next line
                     
+                    let indentLevel = null;
                     while (i < lines.length) {
-                        const nextLine = lines[i];
+                        const currentLine = lines[i];
                         
-                        // If line starts with spaces and is not a new key, it's part of multiline content
-                        if (nextLine.startsWith('  ') || nextLine.startsWith('\t') || (nextLine.trim() === '' && i < lines.length - 1)) {
-                            multilineContent.push(nextLine.replace(/^  /, '').replace(/^\t/, ''));
+                        // Empty line
+                        if (currentLine.trim() === '') {
+                            blockLines.push('');
                             i++;
-                        } else if (nextLine.trim() === '') {
-                            // Empty line in multiline content
-                            multilineContent.push('');
-                            i++;
-                        } else if (nextLine.includes(':') && !nextLine.startsWith('  ')) {
-                            // This is a new key, stop collecting multiline content
+                            continue;
+                        }
+                        
+                        // Set indentation level from first content line
+                        if (indentLevel === null && (currentLine.startsWith(' ') || currentLine.startsWith('\t'))) {
+                            const match = currentLine.match(/^(\s+)/);
+                            indentLevel = match ? match[1].length : 0;
+                            console.log(`📏 Set indent level to: ${indentLevel}`);
+                        }
+                        
+                        // Check if this is a new root-level key
+                        if (currentLine.includes(':') && !currentLine.startsWith(' ') && !currentLine.startsWith('\t')) {
+                            console.log(`🔑 Found new root key, stopping block at: "${currentLine}"`);
+                            break;
+                        }
+                        
+                        // If line has proper indentation, it's part of our block
+                        if (indentLevel !== null) {
+                            const lineIndent = currentLine.match(/^(\s*)/)[1].length;
+                            if (lineIndent >= indentLevel) {
+                                const content = currentLine.substring(indentLevel);
+                                blockLines.push(content);
+                                i++;
+                                continue;
+                            }
+                        }
+                        
+                        // If we get here, this line doesn't belong to our block
+                        console.log(`⏹️ Line doesn't belong to block: "${currentLine}"`);
+                        break;
+                    }
+                    
+                    // Join the collected lines
+                    if (value === '|' || value === '|-') {
+                        value = blockLines.join('\n').trim();
+                    } else {
+                        value = blockLines.join(' ').replace(/\s+/g, ' ').trim();
+                    }
+                    
+                    console.log(`✅ Block scalar result: "${value}" (${value.length} chars)`);
+                }
+                // Handle YAML folded scalars (multi-line without indicators)
+                else if (value && i + 1 < lines.length) {
+                    // Check if the next lines are indented continuations
+                    const continuationLines = [value];
+                    let nextIndex = i + 1;
+                    
+                    while (nextIndex < lines.length) {
+                        const nextLine = lines[nextIndex];
+                        
+                        // Empty line
+                        if (nextLine.trim() === '') {
+                            continuationLines.push('');
+                            nextIndex++;
+                            continue;
+                        }
+                        
+                        // If line starts with spaces and doesn't contain a colon (new key), it's a continuation
+                        if (nextLine.startsWith('  ') && !nextLine.trim().includes(':')) {
+                            continuationLines.push(nextLine.substring(2));
+                            nextIndex++;
+                        } else if (nextLine.includes(':') && !nextLine.startsWith(' ')) {
+                            // This is a new key at root level
                             break;
                         } else {
-                            // Continuation of multiline content
-                            multilineContent.push(nextLine.trim());
-                            i++;
+                            // Uncertain case - stop here
+                            break;
                         }
                     }
                     
-                    // Join the multiline content
-                    value = multilineContent.join(' ').trim();
-                    
+                    // If we found continuation lines, join them
+                    if (continuationLines.length > 1) {
+                        value = continuationLines.join(' ').replace(/\s+/g, ' ').trim();
+                        i = nextIndex - 1; // Set i to the last processed line
+                        console.log(`🔗 Joined continuation lines: "${value}"`);
+                    }
                 } else {
-                    // Single line value, remove quotes
-                    value = value.replace(/^["']|["']$/g, '');
-                    i++;
+                    // Simple single-line value
+                    value = value.replace(/^["']|["']$/g, ''); // Remove quotes
+                }
+                
+                // Clean up the value if it's a summary
+                if (key === 'summary' && value) {
+                    // Remove markdown formatting
+                    value = value.replace(/\*\*(.*?)\*\*/g, '$1'); // Bold
+                    value = value.replace(/\*(.*?)\*/g, '$1'); // Italic
+                    value = value.replace(/#{1,6}\s+/g, ''); // Headers
+                    value = value.replace(/\s+/g, ' ').trim(); // Normalize whitespace
                 }
                 
                 report[key] = value;
-                console.log(`Parsed ${key}:`, value.substring(0, 100) + (value.length > 100 ? '...' : ''));
+                console.log(`✅ Final result for "${key}": "${value.substring(0, 100)}${value.length > 100 ? '...' : ''}" (${value.length} chars)`);
+                
+                i++;
             }
             
+            // Emergency fallback for PDF field
+            if (!report.pdf && yamlText.includes('pdf:')) {
+                console.warn('⚠️ PDF field detected in YAML but not parsed!');
+                const pdfMatch = yamlText.match(/pdf:\s*(.+)/);
+                if (pdfMatch) {
+                    report.pdf = pdfMatch[1].trim();
+                    console.log(`🚑 Emergency PDF extraction: "${report.pdf}"`);
+                }
+            }
+            
+            console.log(`📋 Final report object:`, report);
             return report;
         }
 
