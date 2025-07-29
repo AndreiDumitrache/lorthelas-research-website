@@ -1,6 +1,6 @@
 ---
 title: Cryptocurrency Market Outlook
-date: 2025-07-29T21:07:46.135Z
+date: 2025-07-28T21:07:46.135Z
 category: Market Analysis
 summary: As we get closer to the end of the current cryptocurrency market cycle,
   we provide our thoughts and predictions for the final phase of this risk-heavy
